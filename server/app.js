@@ -1,4 +1,5 @@
 const express = require("express");
+require("dotenv").config();
 const http = require("http");
 const socketio = require("socket.io");
 const cors = require("cors");
@@ -10,10 +11,21 @@ const io = socketio(server);
 chatSockets(io);
 
 // connect to db and listen to port
+const mongoose = require("mongoose");
 const PORT = 4000 | process.env.PORT;
-server.listen(PORT, () => {
-  console.log("listening to port 4000");
-});
+mongoose.connect(
+  process.env.MONGO_URI,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  },
+  () => {
+    console.log("connected to db");
+    server.listen(PORT, () => {
+      console.log("listening to port 4000");
+    });
+  }
+);
 
 // middleware
 app.use(cors());
