@@ -4,7 +4,6 @@ const socketio = require("socket.io");
 const cors = require("cors");
 
 const app = express();
-app.use(cors());
 const server = http.createServer(app);
 const io = socketio(server);
 
@@ -37,11 +36,13 @@ const getApiAndEmit = (socket) => {
 
 // connect to db and listen to port
 const PORT = 4000 | process.env.PORT;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log("listening to port 4000");
 });
 
 // middleware
+app.use(cors());
+app.options("*", cors());
 
 // routes
 app.get("/", (req, res) => {

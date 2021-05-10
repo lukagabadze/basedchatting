@@ -1,18 +1,19 @@
 import React, { ReactElement, useState, useEffect } from "react";
 import socketio from "socket.io-client";
 
-const ENDPOINT = "http://192.168.0.100:4000/";
+const ENDPOINT = "http://localhost:4000";
 
 interface Props {}
 
 function Chat({}: Props): ReactElement {
   const [form, setForm] = useState("test");
 
-  const socket = socketio(ENDPOINT);
-  socket.on("message", () => {
-    console.log("GTXOV BLIAD");
-  });
   useEffect(() => {
+    const socket = socketio(ENDPOINT, { transports: ["websocket"] });
+    socket.on("message", () => {
+      console.log("GTXOVVVVVVVVVVV");
+    });
+    console.log(socket);
     return () => {
       socket.disconnect();
     };
