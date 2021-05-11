@@ -1,40 +1,53 @@
-import React, { ReactElement, useState, useEffect } from "react";
+import React, { ReactElement, useState, useEffect, useCallback } from "react";
 import socketio from "socket.io-client";
+import Messages from "./Messages";
 
 const ENDPOINT = "http://localhost:4000";
 
-interface Props {}
+const socket = socketio(ENDPOINT, { transports: ["websocket"] });
 
-function Chat({}: Props): ReactElement {
-  const [form, setForm] = useState("test");
+const initialForm = "";
+
+function Chat(): ReactElement {
+  const [form, setForm] = useState(initialForm);
+  const [newMessage, setNewMessage] = useState({
+    _id: "",
+    text: "",
+    author: "",
+  });
+
+  const submitMessage = () => {
+    socket.emit("message", form);
+  };
 
   useEffect(() => {
-    const socket = socketio(ENDPOINT, { transports: ["websocket"] });
-    socket.on("message", () => {
-      console.log("GTXOVVVVVVVVVVV");
+    socket.on("messageSuccess", (msg) => {
+      setNewMessage(msg);
     });
-    console.log(socket);
+
     return () => {
       socket.disconnect();
     };
   }, []);
 
   return (
-    <div>
-      <div className="flex flex-col space-y-2">
-        <p>message 1 message 1 message 1 </p>
-        <p>message 2 message 2 message 2 </p>
-        <p>message 3 message 3 message 3 </p>
-        <p>message 4 message 4 message 4 </p>
-      </div>
-      <div>
+    <div className="border-2 border-white">
+      <Messages newMessage={newMessage} />
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          setForm(initialForm);
+          submitMessage();
+        }}
+      >
         <input
           type="text"
-          className="w-full text-black"
+          placeholder="Send a message..."
+          className="w-full text-black border-2 border-black"
           value={form}
           onChange={(e) => setForm(e.target.value)}
         />
-      </div>
+      </form>
     </div>
   );
 }
