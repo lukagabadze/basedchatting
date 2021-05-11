@@ -32,6 +32,5 @@ app.use(cors());
 app.options("*", cors());
 
 // routes
-app.get("/chat", (req, res) => {
-  return res.send("zd gabo");
-});
+const chatRoutes = require("./routes/chatRoutes");
+app.use("/chat", chatRoutes);

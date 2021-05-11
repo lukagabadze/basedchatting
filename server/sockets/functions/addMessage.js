@@ -1,6 +1,6 @@
 const Message = require("../../models/Message");
 
-const addComment = async (text) => {
+const addMessage = async (text) => {
   const message = new Message({
     text,
     author: "gabo",
@@ -10,4 +10,4 @@ const addComment = async (text) => {
   return savedMessage;
 };
 
-module.exports = addComment;
+module.exports = addMessage;
