@@ -29,8 +29,11 @@ mongoose.connect(
 
 // middleware
 app.use(cors());
+app.use(express.json());
 app.options("*", cors());
 
 // routes
+const authRoutes = require("./routes/authRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+app.use("/auth", authRoutes);
 app.use("/chat", chatRoutes);
