@@ -6,7 +6,7 @@ interface Props {}
 function Body({}: Props): ReactElement {
   return (
     <div className="p-10">
-      <div className="bg-indigo-400 h-4/5 flex flex-col space-y-5">
+      <div className="bg-yellow-500 h-4/5 flex flex-col space-y-5">
         <Chat />
       </div>
     </div>
