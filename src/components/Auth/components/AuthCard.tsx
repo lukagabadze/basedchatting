@@ -7,7 +7,7 @@ interface Props {
 function AuthCard({ children }: Props): ReactElement {
   return (
     <div className="bg-yellow-400 rounded-md">
-      <form className="flex flex-col space-y-6 ">{children}</form>
+      <div className="flex flex-col space-y-6 ">{children}</div>
     </div>
   );
 }
