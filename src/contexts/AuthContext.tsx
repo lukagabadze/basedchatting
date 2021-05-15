@@ -13,11 +13,15 @@ interface Props {
 type ContextType = {
   user: string;
   login: (username: string, password: string) => void;
+  signup: (username: string, password: string, password2: string) => void;
 };
 
 const defaultValue = {
   user: "",
   login: () => {
+    return;
+  },
+  signup: () => {
     return;
   },
 };
@@ -43,9 +47,22 @@ function AuthProvider({ children }: Props): ReactElement {
       });
   }
 
+  function signup(username: string, password: string, password2: string) {
+    const body = { username, password };
+    axios
+      .post("http://localhost:4000/auth/signup", body)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   const value = {
     user,
     login,
+    signup,
   };
 
   console.log(user);

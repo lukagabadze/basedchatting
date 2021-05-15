@@ -1,4 +1,5 @@
 import React, { ReactElement, useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 import AuthCard from "./components/AuthCard";
 import AuthError from "./components/AuthError";
 import AuthInput from "./components/AuthInput";
@@ -15,8 +16,15 @@ const initialForm = {
 function Signup({}: Props): ReactElement {
   const [form, setForm] = useState(initialForm);
 
+  const { signup } = useAuth();
+
   return (
-    <form>
+    <form
+      onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        signup(form.username, form.password, form.password2);
+      }}
+    >
       <AuthCard>
         <div className="flex flex-col space-y-2 mx-5 my-3">
           <AuthInput
