@@ -1,17 +1,16 @@
 import { ReactElement, useState, useEffect } from "react";
 import socketio from "socket.io-client";
+import { IMessage } from "../../../models/Message";
 import Messages from "./Messages";
-import { Message } from "./Messages";
 
 const ENDPOINT = "http://localhost:4000";
 
 const socket = socketio(ENDPOINT, { transports: ["websocket"] });
 
 const initialForm = "";
-
 function Chat(): ReactElement {
   const [form, setForm] = useState(initialForm);
-  const [newMessage, setNewMessage] = useState<Message>();
+  const [newMessage, setNewMessage] = useState<IMessage>();
 
   const submitMessage = () => {
     socket.emit("message", form);

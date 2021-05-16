@@ -1,19 +1,14 @@
 import React, { ReactElement, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Message from "./Message";
-
-export interface Message {
-  _id: string;
-  text: string;
-  author: string;
-}
+import { IMessage } from "../../../models/Message";
 
 interface Props {
-  newMessage?: Message;
+  newMessage?: IMessage;
 }
 
 function Messages({ newMessage }: Props): ReactElement {
-  const [messages, setMessages] = useState<Array<Message>>([]);
+  const [messages, setMessages] = useState<Array<IMessage>>([]);
 
   const chatRef = useRef<HTMLDivElement>(null);
 
