@@ -2,14 +2,14 @@ import React, { ReactElement, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Message from "./Message";
 
-interface Message {
+export interface Message {
   _id: string;
   text: string;
   author: string;
 }
 
 interface Props {
-  newMessage: Message;
+  newMessage?: Message;
 }
 
 function Messages({ newMessage }: Props): ReactElement {
@@ -24,7 +24,7 @@ function Messages({ newMessage }: Props): ReactElement {
   }, [messages]);
 
   useEffect(() => {
-    setMessages([...messages, newMessage]);
+    if (newMessage) setMessages([...messages, newMessage]);
   }, [newMessage]);
 
   useEffect(() => {
