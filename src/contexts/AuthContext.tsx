@@ -3,13 +3,15 @@ import React, {
   createContext,
   useContext,
   useState,
+  useEffect,
 } from "react";
+import firebase from "firebase/app";
+import { auth } from "../firebase";
 
-const defaultValue = {
-  user: "gabo",
+type AuthContextType = {
+  user: firebase.User | null;
 };
-
-const AuthContext = createContext(defaultValue);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function useAuth() {
   return useContext(AuthContext);
@@ -20,11 +22,25 @@ interface Props {
 }
 
 export function AuthProvider({ children }: Props): ReactElement {
-  const [user, setUser] = useState("gabo");
+  const [user, setUser] = useState<firebase.User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setUser(user);
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
 
   const value = {
     user,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
 }
