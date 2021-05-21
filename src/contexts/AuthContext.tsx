@@ -10,8 +10,14 @@ import { auth } from "../firebase";
 
 type AuthContextType = {
   user: firebase.User | null;
+  signup(email: string, password: string): void;
 };
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const defaultValue = {
+  user: null,
+  signup: () => {},
+};
+
+const AuthContext = createContext<AuthContextType>(defaultValue);
 
 export function useAuth() {
   return useContext(AuthContext);
@@ -34,8 +40,13 @@ export function AuthProvider({ children }: Props): ReactElement {
     return unsubscribe;
   }, []);
 
+  function signup(email: string, password: string) {
+    auth.createUserWithEmailAndPassword(email, password);
+  }
+
   const value = {
     user,
+    signup,
   };
 
   return (
