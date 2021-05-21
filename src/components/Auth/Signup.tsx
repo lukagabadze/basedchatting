@@ -13,6 +13,7 @@ export default function Signup(): ReactElement {
   const { user, signup } = useAuth();
   const [form, setForm] = useState(initialForm);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function onSubmitHandler(e: React.FormEvent) {
     e.preventDefault();
@@ -23,10 +24,13 @@ export default function Signup(): ReactElement {
       return setError("Passwords must match!");
     }
     try {
+      setLoading(true);
       await signup(email, password);
     } catch {
       setError("Failed to sign up");
     }
+
+    setLoading(false);
   }
 
   return (
@@ -81,7 +85,7 @@ export default function Signup(): ReactElement {
           {error}
         </Typography>
         <Button type="submit" variant="contained" fullWidth>
-          Signup
+          {loading ? "Loading..." : "Signup"}
         </Button>
       </form>
     </Container>
