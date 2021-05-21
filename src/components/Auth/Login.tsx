@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, ReactElement } from "react";
+import { useHistory } from "react-router";
 import { Container, TextField, Typography, Button } from "@material-ui/core";
-import { ReactElement } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 
 const initialForm = {
@@ -10,6 +10,7 @@ const initialForm = {
 
 export default function Login(): ReactElement {
   const { login } = useAuth();
+  const history = useHistory();
   const [form, setForm] = useState(initialForm);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,9 +23,10 @@ export default function Login(): ReactElement {
     try {
       setLoading(true);
       await login(email, password);
+      setForm(initialForm);
+      history.push("/");
     } catch (err) {
       setError("Failed to login!");
-      console.log(err);
     }
     setLoading(false);
   }

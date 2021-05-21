@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router";
 import { Container, TextField, Typography, Button } from "@material-ui/core";
 import { ReactElement } from "react";
 import { useAuth } from "../../contexts/AuthContext";
@@ -10,7 +11,8 @@ const initialForm = {
 };
 
 export default function Signup(): ReactElement {
-  const { user, signup } = useAuth();
+  const { signup } = useAuth();
+  const history = useHistory();
   const [form, setForm] = useState(initialForm);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,6 +28,8 @@ export default function Signup(): ReactElement {
     try {
       setLoading(true);
       await signup(email, password);
+      setForm(initialForm);
+      history.push("/");
     } catch {
       setError("Failed to sign up");
     }
