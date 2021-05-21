@@ -1,10 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import { Container, TextField, Typography, Button } from "@material-ui/core";
 import { ReactElement } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+
+const initialForm = {
+  email: "",
+  password: "",
+  passwordRepeat: "",
+};
 
 export default function Signup(): ReactElement {
-  function onSubmitHandler(e: React.FormEvent) {
+  const { user, signup } = useAuth();
+  const [form, setForm] = useState(initialForm);
+  const [error, setError] = useState("");
+
+  async function onSubmitHandler(e: React.FormEvent) {
     e.preventDefault();
+    setError("");
+
+    const { email, password, passwordRepeat } = form;
+    if (password !== passwordRepeat) {
+      return setError("Passwords must match!");
+    }
+    try {
+      await signup(email, password);
+    } catch {
+      setError("Failed to sign up");
+    }
   }
 
   return (
@@ -22,6 +44,10 @@ export default function Signup(): ReactElement {
           autoFocus
           required
           autoComplete="none"
+          value={form.email}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setForm({ ...form, email: e.target.value });
+          }}
         />
         <TextField
           variant="outlined"
@@ -32,6 +58,10 @@ export default function Signup(): ReactElement {
           autoFocus
           required
           autoComplete="none"
+          value={form.password}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setForm({ ...form, password: e.target.value });
+          }}
         />
         <TextField
           variant="outlined"
@@ -42,7 +72,14 @@ export default function Signup(): ReactElement {
           autoFocus
           required
           autoComplete="none"
+          value={form.passwordRepeat}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setForm({ ...form, passwordRepeat: e.target.value });
+          }}
         />
+        <Typography color="secondary" align="center">
+          {error}
+        </Typography>
         <Button type="submit" variant="contained" fullWidth>
           Signup
         </Button>
