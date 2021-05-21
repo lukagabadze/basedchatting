@@ -1,10 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import { Container, TextField, Typography, Button } from "@material-ui/core";
 import { ReactElement } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+
+const initialForm = {
+  email: "",
+  password: "",
+};
 
 export default function Login(): ReactElement {
-  function onSubmitHandler(e: React.FormEvent) {
+  const { login } = useAuth();
+  const [form, setForm] = useState(initialForm);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function onSubmitHandler(e: React.FormEvent) {
     e.preventDefault();
+    setError("");
+
+    const { email, password } = form;
+    try {
+      setLoading(true);
+      await login(email, password);
+    } catch (err) {
+      setError("Failed to login!");
+      console.log(err);
+    }
+    setLoading(false);
   }
 
   return (
@@ -22,6 +44,10 @@ export default function Login(): ReactElement {
           autoFocus
           required
           autoComplete="none"
+          value={form.email}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setForm({ ...form, email: e.target.value });
+          }}
         />
         <TextField
           variant="outlined"
@@ -32,9 +58,16 @@ export default function Login(): ReactElement {
           autoFocus
           required
           autoComplete="none"
+          value={form.password}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setForm({ ...form, password: e.target.value });
+          }}
         />
+        <Typography color="secondary" align="center">
+          {error}
+        </Typography>
         <Button type="submit" variant="contained" fullWidth>
-          Login
+          {loading ? "loading..." : "Login"}
         </Button>
       </form>
     </Container>
