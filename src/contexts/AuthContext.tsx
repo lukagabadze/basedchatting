@@ -11,10 +11,12 @@ import { auth } from "../firebase";
 type AuthContextType = {
   user: firebase.User | null;
   signup(email: string, password: string): void;
+  login(email: string, password: string): void;
 };
 const defaultValue = {
   user: null,
   signup: () => {},
+  login: () => {},
 };
 
 const AuthContext = createContext<AuthContextType>(defaultValue);
@@ -41,12 +43,17 @@ export function AuthProvider({ children }: Props): ReactElement {
   }, []);
 
   function signup(email: string, password: string) {
-    auth.createUserWithEmailAndPassword(email, password);
+    return auth.createUserWithEmailAndPassword(email, password);
+  }
+
+  function login(email: string, password: string) {
+    return auth.signInWithEmailAndPassword(email, password);
   }
 
   const value = {
     user,
     signup,
+    login,
   };
 
   return (
