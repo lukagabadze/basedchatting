@@ -12,11 +12,13 @@ type AuthContextType = {
   user: firebase.User | null;
   signup(email: string, password: string): void;
   login(email: string, password: string): void;
+  logout: () => void;
 };
 const defaultValue = {
   user: null,
   signup: () => {},
   login: () => {},
+  logout: () => {},
 };
 
 const AuthContext = createContext<AuthContextType>(defaultValue);
@@ -50,10 +52,15 @@ export function AuthProvider({ children }: Props): ReactElement {
     return auth.signInWithEmailAndPassword(email, password);
   }
 
+  function logout() {
+    return auth.signOut();
+  }
+
   const value = {
     user,
     signup,
     login,
+    logout,
   };
 
   return (
