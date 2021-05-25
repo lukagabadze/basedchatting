@@ -1,17 +1,19 @@
 import {
   AppBar,
   Button,
+  CssBaseline,
   makeStyles,
   Toolbar,
   Typography,
 } from "@material-ui/core";
 import { ReactElement } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
 const useStyles = makeStyles({
   title: {
     flexGrow: 1,
+    cursor: "pointer",
   },
   authDiv: {
     flex: "none",
@@ -26,12 +28,17 @@ const useStyles = makeStyles({
 export default function Header(): ReactElement {
   const classes = useStyles();
   const { user, logout } = useAuth();
+  const history = useHistory();
 
   return (
-    <div>
-      <AppBar position="fixed" color="primary">
+    <CssBaseline>
+      <AppBar position="sticky" color="primary">
         <Toolbar>
-          <Typography variant="h4" className={classes.title}>
+          <Typography
+            variant="h4"
+            className={classes.title}
+            onClick={() => history.push("/")}
+          >
             BasedChatting
           </Typography>
           {user ? (
@@ -63,6 +70,6 @@ export default function Header(): ReactElement {
           )}
         </Toolbar>
       </AppBar>
-    </div>
+    </CssBaseline>
   );
 }
