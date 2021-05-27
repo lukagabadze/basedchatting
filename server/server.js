@@ -1,6 +1,7 @@
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
+const cors = require("cors");
 
 const app = express();
 const server = http.createServer(app);
@@ -15,6 +16,9 @@ server.listen(PORT, () => {
 io.on("connection", (socket) => {
   console.log("new user connected");
 });
+
+// middleware
+app.use(cors());
 
 // routes
 const userRoutes = require("./routes/userRoutes");
