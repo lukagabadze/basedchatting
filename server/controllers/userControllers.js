@@ -5,7 +5,15 @@ const allUsers = (req, res) => {
     .auth()
     .listUsers(2)
     .then((listUsersResult) => {
-      return res.status(200).json(listUsersResult);
+      const users = listUsersResult.users.map((user) => {
+        return {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+        };
+      });
+      return res.status(200).json(users);
     });
 };
 
