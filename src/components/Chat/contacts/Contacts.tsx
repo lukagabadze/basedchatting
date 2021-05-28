@@ -20,7 +20,7 @@ export default function Contacts(): ReactElement {
   console.log(contacts);
 
   return (
-    <div style={{ backgroundColor: "green", height: "100vh" }}>
+    <div style={{ backgroundColor: "green", height: "100%" }}>
       {contacts.map((contact) => {
         return (
           <Typography key={contact.uid} style={{ backgroundColor: "purple" }}>

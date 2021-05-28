@@ -18,14 +18,16 @@ function App() {
             }}
           >
             <Header />
-            <Switch>
-              <Route path="/auth">
-                <Auth />
-              </Route>
-              <Route path="/">
-                <Chat />
-              </Route>
-            </Switch>
+            <div style={{ flexGrow: 1 }}>
+              <Switch>
+                <Route path="/auth">
+                  <Auth />
+                </Route>
+                <Route path="/">
+                  <Chat />
+                </Route>
+              </Switch>
+            </div>
           </div>
         </Router>
       </SocketProvider>
