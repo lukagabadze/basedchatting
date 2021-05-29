@@ -1,20 +1,33 @@
 import { ReactElement, useEffect } from "react";
 import Contacts from "./contacts/Contacts";
 import ChatBody from "./chatBody/ChatBody";
-import { Drawer } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 
 interface Props {}
 
 export default function Chat({}: Props): ReactElement {
   useEffect(() => {});
+
   return (
-    <div style={{ height: "100%", display: "flex" }}>
-      <div style={{ width: "300px" }}>
+    <Grid
+      container
+      xs={12}
+      style={{
+        height: "100%",
+      }}
+    >
+      <Grid
+        item
+        xs={3}
+        style={{
+          height: "100%",
+        }}
+      >
         <Contacts />
-      </div>
-      <div style={{ flexGrow: 1 }}>
+      </Grid>
+      <Grid item xs={9}>
         <ChatBody />
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   );
 }

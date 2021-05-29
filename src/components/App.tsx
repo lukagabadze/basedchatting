@@ -4,8 +4,12 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { AuthProvider } from "../contexts/AuthContext";
 import { SocketProvider } from "../contexts/SocketContext";
 import Chat from "./Chat/Chat";
+import { useTheme } from "@material-ui/core";
 
 function App() {
+  const theme = useTheme();
+  console.log(theme.mixins.toolbar);
+
   return (
     <AuthProvider>
       <SocketProvider>
@@ -18,7 +22,12 @@ function App() {
             }}
           >
             <Header />
-            <div style={{ flexGrow: 1 }}>
+            <div
+              style={{
+                flex: 1,
+                overflowY: "auto",
+              }}
+            >
               <Switch>
                 <Route path="/auth">
                   <Auth />
