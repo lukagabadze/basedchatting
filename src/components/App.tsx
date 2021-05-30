@@ -4,43 +4,44 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { AuthProvider } from "../contexts/AuthContext";
 import { SocketProvider } from "../contexts/SocketContext";
 import Chat from "./Chat/Chat";
-import { useTheme } from "@material-ui/core";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const queryClient = new QueryClient();
 
 function App() {
-  const theme = useTheme();
-  console.log(theme.mixins.toolbar);
-
   return (
-    <AuthProvider>
-      <SocketProvider>
-        <Router>
-          <div
-            style={{
-              height: "100vh",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <Header />
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <SocketProvider>
+          <Router>
             <div
               style={{
-                flex: 1,
-                overflowY: "auto",
+                height: "100vh",
+                display: "flex",
+                flexDirection: "column",
               }}
             >
-              <Switch>
-                <Route path="/auth">
-                  <Auth />
-                </Route>
-                <Route path="/">
-                  <Chat />
-                </Route>
-              </Switch>
+              <Header />
+              <div
+                style={{
+                  flex: 1,
+                  overflowY: "auto",
+                }}
+              >
+                <Switch>
+                  <Route path="/auth">
+                    <Auth />
+                  </Route>
+                  <Route path="/">
+                    <Chat />
+                  </Route>
+                </Switch>
+              </div>
             </div>
-          </div>
-        </Router>
-      </SocketProvider>
-    </AuthProvider>
+          </Router>
+        </SocketProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 

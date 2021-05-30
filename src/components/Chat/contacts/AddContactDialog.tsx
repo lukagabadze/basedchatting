@@ -10,12 +10,9 @@ import {
   ListItemText,
   makeStyles,
   Button,
+  Typography,
 } from "@material-ui/core";
-
-export type User = {
-  uid: string;
-  email: string;
-};
+import { useQuery } from "react-query";
 
 const useStyles = makeStyles({
   usersList: {
@@ -29,19 +26,22 @@ interface Props {
   handleToggle: () => void;
 }
 
+export type User = {
+  uid: string;
+  email: string;
+};
+
 export default function AddContactDialogue({
   open,
   handleToggle,
 }: Props): ReactElement {
   const classes = useStyles();
-  const [users, setUsers] = useState<Array<User>>([]);
 
-  useEffect(() => {
-    axios.get("http://localhost:4000/user/all").then((res) => {
-      const users = res.data;
-      setUsers(users);
-    });
-  }, []);
+  const { isLoading, data: users } = useQuery<User[]>(["users"], async () => {
+    const res = await axios.get("http://localhost:4000/user/all");
+    const users = res.data;
+    return users;
+  });
 
   return (
     <Dialog open={open} onClose={handleToggle}>
@@ -50,15 +50,20 @@ export default function AddContactDialogue({
         <TextField label="Users" fullWidth></TextField>
       </DialogContent>
       <List className={classes.usersList}>
-        {users.map((user) => {
-          return (
-            <Button fullWidth>
-              <ListItem>
-                <ListItemText key={user.uid}>{user.email}</ListItemText>
-              </ListItem>
-            </Button>
-          );
-        })}
+        {isLoading ? (
+          <Typography variant="h6">Loading...</Typography>
+        ) : (
+          users &&
+          users.map((user) => {
+            return (
+              <Button fullWidth>
+                <ListItem>
+                  <ListItemText key={user.uid}>{user.email}</ListItemText>
+                </ListItem>
+              </Button>
+            );
+          })
+        )}
       </List>
     </Dialog>
   );
