@@ -12,6 +12,8 @@ const useStyles = makeStyles({
   chatMessagesDiv: {
     backgroundColor: "lightblue",
     flex: 1,
+    display: "flex",
+    flexDirection: "column",
   },
   chatInput: {
     backgroundColor: "lightyellow",
@@ -28,8 +30,16 @@ export default function ChatBody({}: Props): ReactElement {
       justify="space-between"
       className={classes.gridContainer}
     >
-      <Grid item className={classes.chatMessagesDiv}>
-        Chat Messages
+      <Grid container className={classes.chatMessagesDiv}>
+        <Grid item>Chat Messages</Grid>
+        <Grid item style={{ marginLeft: "auto" }}>
+          Chat Messages
+        </Grid>
+        <Grid item>Chat Messages</Grid>
+        <Grid item>Chat Messages</Grid>
+        <Grid item style={{ marginLeft: "auto" }}>
+          Chat Messages
+        </Grid>
       </Grid>
       <Grid item className={classes.chatInput}>
         <TextField variant="outlined" fullWidth margin="dense" />

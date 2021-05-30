@@ -3,7 +3,7 @@ const { admin } = require("../firebaseAdmin");
 const allUsers = (req, res) => {
   admin
     .auth()
-    .listUsers(2)
+    .listUsers(6)
     .then((listUsersResult) => {
       const users = listUsersResult.users.map((user) => {
         return {

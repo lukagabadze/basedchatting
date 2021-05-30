@@ -1,4 +1,4 @@
-import { ReactElement, useEffect } from "react";
+import { ReactElement } from "react";
 import Contacts from "./contacts/Contacts";
 import ChatBody from "./chatBody/ChatBody";
 import { Grid } from "@material-ui/core";
@@ -6,8 +6,6 @@ import { Grid } from "@material-ui/core";
 interface Props {}
 
 export default function Chat({}: Props): ReactElement {
-  useEffect(() => {});
-
   return (
     <Grid
       container
