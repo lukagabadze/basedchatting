@@ -9,7 +9,6 @@ export default function Chat({}: Props): ReactElement {
   return (
     <Grid
       container
-      xs={12}
       style={{
         height: "100%",
       }}

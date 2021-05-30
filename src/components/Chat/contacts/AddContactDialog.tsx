@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement } from "react";
 import axios from "axios";
 import {
   Dialog,
@@ -56,9 +56,9 @@ export default function AddContactDialogue({
           users &&
           users.map((user) => {
             return (
-              <Button fullWidth>
+              <Button key={user.uid} fullWidth>
                 <ListItem>
-                  <ListItemText key={user.uid}>{user.email}</ListItemText>
+                  <ListItemText>{user.email}</ListItemText>
                 </ListItem>
               </Button>
             );
