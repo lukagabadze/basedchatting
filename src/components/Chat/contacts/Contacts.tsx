@@ -1,23 +1,7 @@
-import { ReactElement, useEffect, useState } from "react";
-import axios from "axios";
-import {
-  Box,
-  Button,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  makeStyles,
-  Typography,
-  Fab,
-} from "@material-ui/core";
+import { ReactElement, useState } from "react";
+import { Box, List, makeStyles, Typography, Fab } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import AddContactDialog from "./AddContactDialog";
-
-export type Contact = {
-  uid: string;
-  email: string;
-};
 
 const useStyles = makeStyles({
   list: {
@@ -40,15 +24,7 @@ const useStyles = makeStyles({
 
 export default function Contacts(): ReactElement {
   const classes = useStyles();
-  const [contacts, setContacts] = useState<Array<Contact>>([]);
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    axios.get("http://localhost:4000/user/all").then((res) => {
-      const users = res.data;
-      setContacts(users);
-    });
-  }, []);
 
   const handleToggle = () => {
     return setOpen(!open);
@@ -67,13 +43,6 @@ export default function Contacts(): ReactElement {
             <AddIcon />
           </Fab>
         </Box>
-        {contacts.map((contact) => {
-          return (
-            <ListItem className={classes.listItem}>
-              <ListItemText key={contact.uid}>{contact.email}</ListItemText>
-            </ListItem>
-          );
-        })}
       </List>
       <AddContactDialog open={open} handleToggle={handleToggle} />
     </>
