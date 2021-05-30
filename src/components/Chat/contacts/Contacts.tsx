@@ -9,10 +9,14 @@ export type Contact = {
 
 const useStyles = makeStyles({
   list: {
+    direction: "rtl",
     backgroundColor: "black",
     color: "white",
     height: "100%",
     overflow: "auto",
+  },
+  listItem: {
+    direction: "ltr",
   },
 });
 
@@ -33,7 +37,43 @@ export default function Contacts(): ReactElement {
     <List className={classes.list}>
       {contacts.map((contact) => {
         return (
-          <ListItem>
+          <ListItem className={classes.listItem}>
+            <ListItemText
+              key={contact.uid}
+              style={{ backgroundColor: "purple" }}
+            >
+              {contact.email}
+            </ListItemText>
+          </ListItem>
+        );
+      })}
+      {contacts.map((contact) => {
+        return (
+          <ListItem className={classes.listItem}>
+            <ListItemText
+              key={contact.uid}
+              style={{ backgroundColor: "purple" }}
+            >
+              {contact.email}
+            </ListItemText>
+          </ListItem>
+        );
+      })}
+      {contacts.map((contact) => {
+        return (
+          <ListItem className={classes.listItem}>
+            <ListItemText
+              key={contact.uid}
+              style={{ backgroundColor: "purple" }}
+            >
+              {contact.email}
+            </ListItemText>
+          </ListItem>
+        );
+      })}
+      {contacts.map((contact) => {
+        return (
+          <ListItem className={classes.listItem}>
             <ListItemText
               key={contact.uid}
               style={{ backgroundColor: "purple" }}
