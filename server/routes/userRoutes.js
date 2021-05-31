@@ -3,7 +3,7 @@ const userControllers = require("../controllers/userControllers");
 
 const router = Router();
 
-router.get("/all", userControllers.allUsers);
-router.get("/find/:query", userControllers.queryUsers);
+router.get("/users", userControllers.allUsers);
+router.get("/users/:query", userControllers.queryUsers);
 
 module.exports = router;
