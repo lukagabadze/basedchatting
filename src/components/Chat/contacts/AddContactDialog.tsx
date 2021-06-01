@@ -38,6 +38,7 @@ export default function AddContactDialogue({
   const classes = useStyles();
   const inputRef = useRef<HTMLInputElement>(null);
   const [queryUsers, setQueryUsers] = useState<User[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
 
   const { isLoading, data: users } = useQuery<User[]>(["users"], async () => {
     const res = await axios.get("http://localhost:4000/user/users");
@@ -52,11 +53,26 @@ export default function AddContactDialogue({
     setQueryUsers(res.data);
   }, []);
 
+  const onUserClickHandler = (userId: number) => {
+    if (users) {
+      return setSelectedUsers([...selectedUsers, users[userId]]);
+    }
+  };
+  console.log(selectedUsers);
+
   const setOfUsers = queryUsers.length ? queryUsers : users;
 
   return (
     <Dialog open={open} onClose={handleToggle}>
       <DialogTitle>Add a contact</DialogTitle>
+
+      {selectedUsers.map((user, ind) => {
+        return (
+          <ListItem>
+            <ListItemText>{user.email}</ListItemText>
+          </ListItem>
+        );
+      })}
 
       <DialogContent>
         <form onSubmit={onFormSubmitHandler}>
@@ -66,12 +82,18 @@ export default function AddContactDialogue({
 
       <List className={classes.usersList}>
         {isLoading ? (
-          <Typography variant="h6">Loading...</Typography>
+          <Typography variant="h6" align="center">
+            Loading...
+          </Typography>
         ) : (
           setOfUsers &&
-          setOfUsers.map((user) => {
+          setOfUsers.map((user, ind) => {
             return (
-              <Button key={user.uid} fullWidth>
+              <Button
+                key={user.uid}
+                fullWidth
+                onClick={() => onUserClickHandler(ind)}
+              >
                 <ListItem>
                   <ListItemText>{user.email}</ListItemText>
                 </ListItem>
