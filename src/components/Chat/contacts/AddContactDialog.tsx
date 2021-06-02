@@ -11,13 +11,18 @@ import {
   makeStyles,
   Button,
   Typography,
+  IconButton,
 } from "@material-ui/core";
+import CloseIcon from "@material-ui/icons/Close";
 import { useQuery } from "react-query";
 
 const useStyles = makeStyles({
   usersList: {
     maxHeight: "35vh",
     overflowY: "auto",
+  },
+  userButton: {
+    textTransform: "none",
   },
 });
 
@@ -54,11 +59,16 @@ export default function AddContactDialogue({
   }, []);
 
   const onUserClickHandler = (userId: number) => {
-    if (users) {
+    if (users && !selectedUsers.includes(users[userId])) {
       return setSelectedUsers([...selectedUsers, users[userId]]);
     }
   };
-  console.log(selectedUsers);
+
+  const removeUserHandler = (userId: number) => {
+    const selectedUsersCopy = [...selectedUsers];
+    selectedUsersCopy.splice(userId, 1);
+    setSelectedUsers(selectedUsersCopy);
+  };
 
   const setOfUsers = queryUsers.length ? queryUsers : users;
 
@@ -69,6 +79,13 @@ export default function AddContactDialogue({
       {selectedUsers.map((user, ind) => {
         return (
           <ListItem>
+            <IconButton
+              area-label="remove"
+              size="small"
+              onClick={() => removeUserHandler(ind)}
+            >
+              <CloseIcon color="secondary" />
+            </IconButton>
             <ListItemText>{user.email}</ListItemText>
           </ListItem>
         );
@@ -93,6 +110,7 @@ export default function AddContactDialogue({
                 key={user.uid}
                 fullWidth
                 onClick={() => onUserClickHandler(ind)}
+                className={classes.userButton}
               >
                 <ListItem>
                   <ListItemText>{user.email}</ListItemText>
