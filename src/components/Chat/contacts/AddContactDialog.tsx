@@ -18,7 +18,7 @@ import { useQuery } from "react-query";
 
 const useStyles = makeStyles({
   usersList: {
-    maxHeight: "35vh",
+    maxHeight: "30vh",
     overflowY: "auto",
   },
   userButton: {
@@ -70,26 +70,32 @@ export default function AddContactDialogue({
     setSelectedUsers(selectedUsersCopy);
   };
 
+  const submitButtonHandler = () => {
+    handleToggle();
+  };
+
   const setOfUsers = queryUsers.length ? queryUsers : users;
 
   return (
     <Dialog open={open} onClose={handleToggle}>
       <DialogTitle>Add a contact</DialogTitle>
 
-      {selectedUsers.map((user, ind) => {
-        return (
-          <ListItem>
-            <IconButton
-              area-label="remove"
-              size="small"
-              onClick={() => removeUserHandler(ind)}
-            >
-              <CloseIcon color="secondary" />
-            </IconButton>
-            <ListItemText>{user.email}</ListItemText>
-          </ListItem>
-        );
-      })}
+      <List className={classes.usersList}>
+        {selectedUsers.map((user, ind) => {
+          return (
+            <ListItem key={user.uid}>
+              <IconButton
+                area-label="remove"
+                size="small"
+                onClick={() => removeUserHandler(ind)}
+              >
+                <CloseIcon color="secondary" />
+              </IconButton>
+              <ListItemText>{user.email}</ListItemText>
+            </ListItem>
+          );
+        })}
+      </List>
 
       <DialogContent>
         <form onSubmit={onFormSubmitHandler}>
@@ -120,6 +126,12 @@ export default function AddContactDialogue({
           })
         )}
       </List>
+      <Button
+        disabled={selectedUsers.length === 0}
+        onClick={submitButtonHandler}
+      >
+        Submit
+      </Button>
     </Dialog>
   );
 }
