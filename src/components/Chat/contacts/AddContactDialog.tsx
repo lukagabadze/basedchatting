@@ -1,5 +1,6 @@
 import { ReactElement, useRef, useCallback, useState } from "react";
 import axios from "axios";
+import firebase from "firebase";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +16,8 @@ import {
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import { useQuery } from "react-query";
+import { database } from "../../../firebase";
+import { useAuth } from "../../../contexts/AuthContext";
 
 const useStyles = makeStyles({
   usersList: {
@@ -40,6 +43,7 @@ export default function AddContactDialogue({
   open,
   handleToggle,
 }: Props): ReactElement {
+  const { user } = useAuth();
   const classes = useStyles();
   const inputRef = useRef<HTMLInputElement>(null);
   const [queryUsers, setQueryUsers] = useState<User[]>([]);
@@ -71,6 +75,24 @@ export default function AddContactDialogue({
   };
 
   const submitButtonHandler = () => {
+    if (!user) {
+      return alert("You must be logged in");
+    }
+
+    const selectedUsersUids = selectedUsers.map(
+      (selectedUser) => selectedUser.uid
+    );
+
+    const newContact = {
+      name: "New contact",
+      members: selectedUsersUids,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+
+    const userContactsRef = database.ref("contacts");
+    userContactsRef.push(newContact);
+
+    setSelectedUsers([]);
     handleToggle();
   };
 
