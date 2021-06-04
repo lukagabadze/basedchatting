@@ -1,6 +1,5 @@
 import { ReactElement, useRef, useCallback, useState } from "react";
 import axios from "axios";
-import firebase from "firebase";
 import {
   Dialog,
   DialogContent,
@@ -86,7 +85,7 @@ export default function AddContactDialogue({
     const newContact = {
       name: "",
       members: selectedUsersUids,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      createdAt: Date.now(),
     };
 
     const userContactsRef = database.ref("contacts");

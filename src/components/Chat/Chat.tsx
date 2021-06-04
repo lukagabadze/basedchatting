@@ -29,7 +29,7 @@ export default function Chat({}: Props): ReactElement {
         <Contacts setContactHandler={setContactHandler} />
       </Grid>
       <Grid item xs={9}>
-        <ChatBody contactProp={contact} />
+        {contact && <ChatBody contactProp={contact} />}
       </Grid>
     </Grid>
   );
