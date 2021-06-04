@@ -1,14 +1,19 @@
 import { ReactElement, useEffect, useState } from "react";
-import { Typography } from "@material-ui/core";
+import { Typography, Button } from "@material-ui/core";
 import { database } from "../../../firebase";
+import { ContactType } from "./Contacts";
 
 interface Props {
-  name: string;
-  members: string[];
+  contactProp: ContactType;
+  setContactHandler: (contact: ContactType) => void;
 }
 
-export default function Contact({ name, members }: Props): ReactElement {
-  const [contactName, setContactName] = useState(name);
+export default function Contact({
+  contactProp,
+  setContactHandler,
+}: Props): ReactElement {
+  const [contact, setContact] = useState<ContactType>(contactProp);
+  const { name, members } = contactProp;
 
   useEffect(() => {
     const fetchMemberNames = () => {
@@ -19,15 +24,25 @@ export default function Contact({ name, members }: Props): ReactElement {
         memberNames.push(displayName);
 
         if (ind === members.length - 1) {
-          setContactName(memberNames.join(", "));
+          setContact({ ...contact, name: memberNames.join(", ") });
         }
       });
     };
 
     if (!name) return fetchMemberNames();
 
-    setContactName(name);
-  }, [name]);
+    setContact(contactProp);
+  }, [contactProp]);
 
-  return <Typography noWrap>{contactName}</Typography>;
+  return (
+    <Button
+      fullWidth
+      style={{ textTransform: "none" }}
+      onClick={() => {
+        setContactHandler(contact);
+      }}
+    >
+      <Typography noWrap>{contact.name}</Typography>
+    </Button>
+  );
 }

@@ -1,11 +1,17 @@
-import { ReactElement } from "react";
-import Contacts from "./contacts/Contacts";
+import { ReactElement, useState } from "react";
+import Contacts, { ContactType } from "./contacts/Contacts";
 import ChatBody from "./chatBody/ChatBody";
 import { Grid } from "@material-ui/core";
 
 interface Props {}
 
 export default function Chat({}: Props): ReactElement {
+  const [contact, setContact] = useState<ContactType | null>(null);
+
+  const setContactHandler = (contact: ContactType) => {
+    setContact(contact);
+  };
+
   return (
     <Grid
       container
@@ -20,10 +26,10 @@ export default function Chat({}: Props): ReactElement {
           height: "100%",
         }}
       >
-        <Contacts />
+        <Contacts setContactHandler={setContactHandler} />
       </Grid>
       <Grid item xs={9}>
-        <ChatBody />
+        <ChatBody contactProp={contact} />
       </Grid>
     </Grid>
   );

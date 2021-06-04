@@ -6,11 +6,16 @@ import {
   makeStyles,
   Typography,
   Fab,
+  Button,
 } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import AddContactDialog from "./AddContactDialog";
 import { database } from "../../../firebase";
 import Contact from "./Contact";
+
+interface Props {
+  setContactHandler: (contact: ContactType) => void;
+}
 
 const useStyles = makeStyles({
   contactsBox: {
@@ -34,17 +39,17 @@ const useStyles = makeStyles({
   addContactButton: {},
 });
 
-export type Contact = {
+export type ContactType = {
   key: string;
   name: string;
   members: string[];
   createdAt: Date;
 };
 
-export default function Contacts(): ReactElement {
+export default function Contacts({ setContactHandler }: Props): ReactElement {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [contacts, setContacts] = useState<ContactType[]>([]);
 
   const handleToggle = () => {
     return setOpen(!open);
@@ -53,9 +58,8 @@ export default function Contacts(): ReactElement {
   useEffect(() => {
     const contactRef = database.ref("contacts");
     contactRef.on("value", (snapshot) => {
-      let fetchedContacts: Contact[] = [];
+      let fetchedContacts: ContactType[] = [];
       snapshot.forEach((childSnapshot) => {
-        // const
         fetchedContacts.push({
           key: childSnapshot.key,
           ...childSnapshot.val(),
@@ -80,8 +84,11 @@ export default function Contacts(): ReactElement {
       <List className={classes.list}>
         {contacts.map((contact) => {
           return (
-            <ListItem key={contact.key}>
-              <Contact name={contact.name} members={contact.members} />
+            <ListItem key={contact.key} dense disableGutters divider>
+              <Contact
+                contactProp={contact}
+                setContactHandler={setContactHandler}
+              />
             </ListItem>
           );
         })}

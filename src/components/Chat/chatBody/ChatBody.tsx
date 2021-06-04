@@ -1,7 +1,10 @@
+import { ReactElement, useEffect, useState } from "react";
 import { Grid, makeStyles, TextField } from "@material-ui/core";
-import { ReactElement } from "react";
+import { ContactType } from "../contacts/Contacts";
 
-interface Props {}
+interface Props {
+  contactProp: ContactType | null;
+}
 
 const useStyles = makeStyles({
   gridContainer: {
@@ -20,8 +23,13 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ChatBody({}: Props): ReactElement {
+export default function ChatBody({ contactProp }: Props): ReactElement {
   const classes = useStyles();
+  const [contact, setContact] = useState<ContactType | null>(contactProp);
+
+  useEffect(() => {
+    setContact(contactProp);
+  }, [contactProp]);
 
   return (
     <Grid
@@ -30,17 +38,8 @@ export default function ChatBody({}: Props): ReactElement {
       justify="space-between"
       className={classes.gridContainer}
     >
-      <Grid container className={classes.chatMessagesDiv}>
-        <Grid item>Chat Messages</Grid>
-        <Grid item style={{ marginLeft: "auto" }}>
-          Chat Messages
-        </Grid>
-        <Grid item>Chat Messages</Grid>
-        <Grid item>Chat Messages</Grid>
-        <Grid item style={{ marginLeft: "auto" }}>
-          Chat Messages
-        </Grid>
-      </Grid>
+      {contact && contact.name}
+      <Grid container className={classes.chatMessagesDiv}></Grid>
       <Grid item className={classes.chatInput}>
         <TextField variant="outlined" fullWidth margin="dense" />
       </Grid>
