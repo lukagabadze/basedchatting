@@ -6,7 +6,7 @@ import React, {
   useEffect,
 } from "react";
 import firebase from "firebase/app";
-import { auth } from "../firebase";
+import { auth, database } from "../firebase";
 
 type AuthContextType = {
   user: firebase.User | null;
@@ -39,6 +39,16 @@ export function AuthProvider({ children }: Props): ReactElement {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setUser(user);
       setLoading(false);
+      if (user) {
+        const usersRef = database.ref(`users/`);
+        usersRef.once("value").then((snapshot) => {
+          if (!snapshot.child(user.uid).exists()) {
+            database.ref(`/users/${user.uid}`).set({
+              displayName: user.email,
+            });
+          }
+        });
+      }
     });
 
     return unsubscribe;
