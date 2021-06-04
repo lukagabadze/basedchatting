@@ -84,7 +84,7 @@ export default function AddContactDialogue({
     );
 
     const newContact = {
-      name: "New contact",
+      name: "",
       members: selectedUsersUids,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     };

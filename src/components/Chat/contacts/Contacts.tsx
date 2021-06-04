@@ -81,7 +81,7 @@ export default function Contacts(): ReactElement {
         {contacts.map((contact) => {
           return (
             <ListItem key={contact.key}>
-              <Contact name={contact.name} />
+              <Contact name={contact.name} members={contact.members} />
             </ListItem>
           );
         })}
