@@ -31,6 +31,12 @@ interface Props {
   children: React.ReactNode;
 }
 
+export type UserType = {
+  uid: string;
+  email: string;
+  displayName: string;
+};
+
 export function AuthProvider({ children }: Props): ReactElement {
   const [user, setUser] = useState<firebase.User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -39,23 +45,21 @@ export function AuthProvider({ children }: Props): ReactElement {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setUser(user);
       setLoading(false);
-      if (user) {
-        const usersRef = database.ref(`users/`);
-        usersRef.once("value").then((snapshot) => {
-          if (!snapshot.child(user.uid).exists()) {
-            database.ref(`/users/${user.uid}`).set({
-              displayName: user.email,
-            });
-          }
-        });
-      }
     });
 
     return unsubscribe;
   }, []);
 
-  function signup(email: string, password: string) {
-    return auth.createUserWithEmailAndPassword(email, password);
+  async function signup(email: string, password: string) {
+    const { user } = await auth.createUserWithEmailAndPassword(email, password);
+    if (!user) return;
+
+    const usersRef = database.collection("users").doc(user.uid);
+    usersRef.set({
+      uid: user.uid,
+      email: user.email,
+      displayName: user.email,
+    });
   }
 
   function login(email: string, password: string) {
