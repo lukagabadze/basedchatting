@@ -1,44 +1,72 @@
 import { ReactElement, useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogTitle } from "@material-ui/core";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  List,
+  ListItem,
+  ListItemText,
+  makeStyles,
+} from "@material-ui/core";
 import { database } from "../../../firebase";
+import { useAuth, UserType } from "../../../contexts/AuthContext";
 
 interface Props {
   open: boolean;
   handleToggle: () => void;
 }
 
-export type User = {
-  uid: string;
-  displayName: string;
-};
+const useStyles = makeStyles({
+  usersList: {
+    maxHeight: "45vh",
+    overflowY: "auto",
+  },
+});
 
 export default function AddContactDialogue({
   open,
   handleToggle,
 }: Props): ReactElement {
-  const [users, setUsers] = useState<User[]>([]);
+  const { user } = useAuth();
+  const classes = useStyles();
+  const [users, setUsers] = useState<UserType[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<UserType[]>([]);
 
   useEffect(() => {
-    database.ref("users").once("value", (snap) => {
-      let users: User[] = [];
-      snap.forEach((childSnap) => {
-        users.push({
-          uid: childSnap.key,
-          ...childSnap.val(),
+    async function fetchUsers() {
+      if (!user) return;
+
+      const usersRef = database.collection("users");
+      const snapshot = await usersRef.where("uid", "!=", user.uid).get();
+
+      let usersList: UserType[] = [];
+      snapshot.forEach((doc) => {
+        const { email, displayName } = doc.data();
+        usersList.push({
+          uid: doc.id,
+          email,
+          displayName,
         });
       });
+      setUsers(usersList);
+    }
 
-      setUsers(users);
-    });
+    fetchUsers();
   }, []);
 
   return (
-    <Dialog open={open} onClose={handleToggle}>
+    <Dialog open={open} onClose={handleToggle} fullWidth maxWidth="sm">
       <DialogTitle>Add a contact</DialogTitle>
       <DialogContent>
-        {users.map((user) => {
-          return <h1 key={user.uid}>{user.displayName}</h1>;
-        })}
+        <List className={classes.usersList}>
+          {users.map((user) => {
+            return (
+              <ListItem key={user.uid} button onClick={() => {}}>
+                <ListItemText primary={user.displayName} />
+              </ListItem>
+            );
+          })}
+        </List>
       </DialogContent>
     </Dialog>
   );
