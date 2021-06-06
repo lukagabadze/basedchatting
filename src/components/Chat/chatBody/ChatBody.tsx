@@ -40,30 +40,42 @@ export default function ChatBody({ contactProp }: Props): ReactElement {
     if (!contact) return;
 
     const newMessage = {
-      contactKey: contact.key,
-      sender: user.uid,
       text: inputRef.current.value,
+      sender: user.uid,
+      contactId: contact.id,
       createdAt: Date.now(),
     };
-    database.ref("messages").push(newMessage);
+    database.collection(`messages`).add(newMessage);
     inputRef.current.value = "";
   };
 
   useEffect(() => {
     setContact(contactProp);
-    const messagesRef = database.ref("messages");
-    messagesRef.on("value", (snapshot) => {
-      let fetchedMessages: MessageType[] = [];
-      snapshot.forEach((childSnapshot) => {
-        fetchedMessages.push({
-          key: childSnapshot.key,
-          ...childSnapshot.val(),
+
+    async function fetchMessages() {
+      if (!contactProp) return;
+
+      const messagesRef = database.collection("messages");
+      const snapshot = await messagesRef
+        .where("contactId", "==", contactProp.id)
+        .get();
+
+      let messagesList: MessageType[] = [];
+      snapshot.forEach((doc) => {
+        const { text, sender, contactId, createdAt } = doc.data();
+        messagesList.push({
+          id: doc.id,
+          text,
+          sender,
+          contactId,
+          createdAt,
         });
       });
-      setMessages(fetchedMessages);
-    });
 
-    // return messagesRef.off();
+      setMessages(messagesList);
+    }
+
+    fetchMessages();
   }, [contactProp]);
 
   return (
@@ -77,7 +89,7 @@ export default function ChatBody({ contactProp }: Props): ReactElement {
       <Grid container className={classes.chatMessagesDiv}>
         {/* {messages.map(message=> <Grid item key={message.key}><Message  /><Grid/>)} */}
         {messages.map((message) => (
-          <Grid item key={message.key}>
+          <Grid item key={message.id}>
             <Message message={message} isOwn={message.sender === user?.uid} />
           </Grid>
         ))}

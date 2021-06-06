@@ -2,10 +2,10 @@ import { Typography } from "@material-ui/core";
 import React, { ReactElement } from "react";
 
 export type MessageType = {
-  key: string;
+  id: string;
   text: string;
   sender: string;
-  contactKey: string;
+  contactId: string;
   createdAt: Date;
 };
 
