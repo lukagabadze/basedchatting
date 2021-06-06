@@ -13,24 +13,8 @@ export default function Contact({
   setContactHandler,
 }: Props): ReactElement {
   const [contact, setContact] = useState<ContactType>(contactProp);
-  const { name, members } = contactProp;
 
   useEffect(() => {
-    const fetchMemberNames = () => {
-      let memberNames: string[] = [];
-      members.forEach(async (uid, ind) => {
-        const snapshot = await database.ref(`users/${uid}`).once("value");
-        const { displayName } = snapshot.val();
-        memberNames.push(displayName);
-
-        if (ind === members.length - 1) {
-          setContact({ ...contact, name: memberNames.join(", ") });
-        }
-      });
-    };
-
-    if (!name) return fetchMemberNames();
-
     setContact(contactProp);
   }, [contactProp]);
 

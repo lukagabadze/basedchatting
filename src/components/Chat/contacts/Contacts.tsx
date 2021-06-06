@@ -6,12 +6,12 @@ import {
   makeStyles,
   Typography,
   Fab,
-  Button,
 } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import AddContactDialog from "./AddContactDialog";
 import { database } from "../../../firebase";
 import Contact from "./Contact";
+import { useAuth } from "../../../contexts/AuthContext";
 
 interface Props {
   setContactHandler: (contact: ContactType) => void;
@@ -40,13 +40,14 @@ const useStyles = makeStyles({
 });
 
 export type ContactType = {
-  key: string;
+  id: string;
   name: string;
   members: string[];
   createdAt: Date;
 };
 
 export default function Contacts({ setContactHandler }: Props): ReactElement {
+  const { user } = useAuth();
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [contacts, setContacts] = useState<ContactType[]>([]);
@@ -56,17 +57,28 @@ export default function Contacts({ setContactHandler }: Props): ReactElement {
   };
 
   useEffect(() => {
-    const contactRef = database.ref("contacts");
-    contactRef.on("value", (snapshot) => {
-      let fetchedContacts: ContactType[] = [];
-      snapshot.forEach((childSnapshot) => {
-        fetchedContacts.push({
-          key: childSnapshot.key,
-          ...childSnapshot.val(),
+    async function fetchContacts() {
+      if (!user) return;
+      const contactsRef = database.collection("contacts");
+      const snapshot = await contactsRef
+        .where("members", "array-contains", user.uid)
+        .get();
+
+      let contactsList: ContactType[] = [];
+      snapshot.forEach((doc) => {
+        const { name, members, createdAt } = doc.data();
+        contactsList.push({
+          id: doc.id,
+          name,
+          members,
+          createdAt,
         });
       });
-      setContacts(fetchedContacts);
-    });
+
+      setContacts(contactsList);
+    }
+
+    fetchContacts();
   }, []);
 
   return (
@@ -84,7 +96,7 @@ export default function Contacts({ setContactHandler }: Props): ReactElement {
       <List className={classes.list}>
         {contacts.map((contact) => {
           return (
-            <ListItem key={contact.key} dense disableGutters divider>
+            <ListItem key={contact.id} dense disableGutters divider>
               <Contact
                 contactProp={contact}
                 setContactHandler={setContactHandler}
