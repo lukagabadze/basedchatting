@@ -1,10 +1,14 @@
-import { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
 import {
+  Button,
+  Checkbox,
   Dialog,
   DialogContent,
   DialogTitle,
+  Input,
   List,
   ListItem,
+  ListItemIcon,
   ListItemText,
   makeStyles,
 } from "@material-ui/core";
@@ -17,6 +21,9 @@ interface Props {
 }
 
 const useStyles = makeStyles({
+  dialogHeader: {
+    margin: "auto",
+  },
   usersList: {
     maxHeight: "45vh",
     overflowY: "auto",
@@ -31,6 +38,7 @@ export default function AddContactDialogue({
   const classes = useStyles();
   const [users, setUsers] = useState<UserType[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<UserType[]>([]);
+  const contactNameRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     async function fetchUsers() {
@@ -54,20 +62,78 @@ export default function AddContactDialogue({
     fetchUsers();
   }, []);
 
+  function onCheckboxChangeHandler(user: UserType, selected: boolean) {
+    let selectedUsersCopy = [...selectedUsers];
+    if (selected) {
+      selectedUsersCopy.splice(selectedUsersCopy.indexOf(user), 1);
+    } else {
+      selectedUsersCopy.push(user);
+    }
+
+    setSelectedUsers(selectedUsersCopy);
+  }
+
+  function onSubmitHandler(e: React.FormEvent) {
+    e.preventDefault();
+    if (!user) return;
+    if (!contactNameRef.current) return;
+
+    const contactName = contactNameRef.current.value;
+    const userUids: string[] = [];
+    selectedUsers.map(({ uid }) => {
+      userUids.push(uid);
+    });
+    userUids.push(user.uid);
+
+    const newContact = {
+      name: contactName,
+      members: userUids,
+      createdAt: Date.now(),
+    };
+
+    const contactRef = database.collection("contacts");
+    contactRef.add(newContact);
+
+    handleToggle();
+    setSelectedUsers([]);
+    contactNameRef.current.value = "";
+  }
+
   return (
     <Dialog open={open} onClose={handleToggle} fullWidth maxWidth="sm">
-      <DialogTitle>Add a contact</DialogTitle>
-      <DialogContent>
-        <List className={classes.usersList}>
-          {users.map((user) => {
-            return (
-              <ListItem key={user.uid} button onClick={() => {}}>
-                <ListItemText primary={user.displayName} />
-              </ListItem>
-            );
-          })}
-        </List>
-      </DialogContent>
+      <DialogTitle className={classes.dialogHeader}>Add a contact</DialogTitle>
+
+      <form onSubmit={onSubmitHandler}>
+        <DialogContent>
+          <Input
+            inputRef={contactNameRef}
+            placeholder="Contact name"
+            fullWidth
+            required
+          />
+
+          <List className={classes.usersList}>
+            {users.map((user) => {
+              const selected = selectedUsers.includes(user);
+              return (
+                <ListItem
+                  key={user.uid}
+                  button
+                  onClick={() => onCheckboxChangeHandler(user, selected)}
+                >
+                  <ListItemIcon>
+                    <Checkbox checked={selected} />
+                  </ListItemIcon>
+                  <ListItemText primary={user.displayName} />
+                </ListItem>
+              );
+            })}
+          </List>
+          <Button type="submit" variant="contained" color="primary" fullWidth>
+            Submit
+          </Button>
+        </DialogContent>
+      </form>
     </Dialog>
   );
 }
