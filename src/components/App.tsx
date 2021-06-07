@@ -5,6 +5,7 @@ import { AuthProvider } from "../contexts/AuthContext";
 import { SocketProvider } from "../contexts/SocketContext";
 import Chat from "./Chat/Chat";
 import { QueryClient, QueryClientProvider } from "react-query";
+import PrivateRoute from "./PrivateRoute";
 
 const queryClient = new QueryClient();
 
@@ -32,9 +33,7 @@ function App() {
                   <Route path="/auth">
                     <Auth />
                   </Route>
-                  <Route path="/">
-                    <Chat />
-                  </Route>
+                  <PrivateRoute path="" component={Chat} />
                 </Switch>
               </div>
             </div>
