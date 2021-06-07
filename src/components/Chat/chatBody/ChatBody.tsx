@@ -56,23 +56,24 @@ export default function ChatBody({ contactProp }: Props): ReactElement {
       if (!contactProp) return;
 
       const messagesRef = database.collection("messages");
-      const snapshot = await messagesRef
+      messagesRef
         .where("contactId", "==", contactProp.id)
-        .get();
+        .orderBy("createdAt", "asc")
+        .onSnapshot((docSnap) => {
+          let messagesList: MessageType[] = [];
+          docSnap.forEach((doc) => {
+            const { text, sender, contactId, createdAt } = doc.data();
+            messagesList.push({
+              id: doc.id,
+              text,
+              sender,
+              contactId,
+              createdAt,
+            });
+          });
 
-      let messagesList: MessageType[] = [];
-      snapshot.forEach((doc) => {
-        const { text, sender, contactId, createdAt } = doc.data();
-        messagesList.push({
-          id: doc.id,
-          text,
-          sender,
-          contactId,
-          createdAt,
+          setMessages(messagesList);
         });
-      });
-
-      setMessages(messagesList);
     }
 
     fetchMessages();

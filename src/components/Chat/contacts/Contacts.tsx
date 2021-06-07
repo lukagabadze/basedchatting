@@ -62,20 +62,20 @@ export default function Contacts({ setContactHandler }: Props): ReactElement {
       const contactsRef = database.collection("contacts");
       const snapshot = await contactsRef
         .where("members", "array-contains", user.uid)
-        .get();
+        .onSnapshot((docSnap) => {
+          let contactsList: ContactType[] = [];
+          docSnap.forEach((doc) => {
+            const { name, members, createdAt } = doc.data();
+            contactsList.push({
+              id: doc.id,
+              name,
+              members,
+              createdAt,
+            });
+          });
 
-      let contactsList: ContactType[] = [];
-      snapshot.forEach((doc) => {
-        const { name, members, createdAt } = doc.data();
-        contactsList.push({
-          id: doc.id,
-          name,
-          members,
-          createdAt,
+          setContacts(contactsList);
         });
-      });
-
-      setContacts(contactsList);
     }
 
     fetchContacts();
