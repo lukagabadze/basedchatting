@@ -28,7 +28,7 @@ export default function Chat({}: Props): ReactElement {
       >
         <Contacts setContactHandler={setContactHandler} />
       </Grid>
-      <Grid item xs={9}>
+      <Grid item xs={9} style={{ height: "100%" }}>
         {contact && <ChatBody contactProp={contact} />}
       </Grid>
     </Grid>

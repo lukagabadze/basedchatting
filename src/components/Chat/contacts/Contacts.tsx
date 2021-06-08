@@ -60,7 +60,7 @@ export default function Contacts({ setContactHandler }: Props): ReactElement {
     async function fetchContacts() {
       if (!user) return;
       const contactsRef = database.collection("contacts");
-      const snapshot = await contactsRef
+      contactsRef
         .where("members", "array-contains", user.uid)
         .onSnapshot((docSnap) => {
           let contactsList: ContactType[] = [];
@@ -79,7 +79,7 @@ export default function Contacts({ setContactHandler }: Props): ReactElement {
     }
 
     fetchContacts();
-  }, []);
+  }, [user]);
 
   return (
     <Box className={classes.contactsBox}>

@@ -1,6 +1,5 @@
 import { ReactElement, useEffect, useState } from "react";
 import { Typography, Button } from "@material-ui/core";
-import { database } from "../../../firebase";
 import { ContactType } from "./Contacts";
 
 interface Props {

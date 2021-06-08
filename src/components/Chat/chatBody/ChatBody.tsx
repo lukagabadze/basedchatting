@@ -1,5 +1,5 @@
 import { ReactElement, useEffect, useState, useRef } from "react";
-import { Grid, makeStyles, TextField } from "@material-ui/core";
+import { Box, makeStyles, TextField, Typography } from "@material-ui/core";
 import { ContactType } from "../contacts/Contacts";
 import { useAuth } from "../../../contexts/AuthContext";
 import { database } from "../../../firebase";
@@ -11,18 +11,23 @@ interface Props {
 
 const useStyles = makeStyles({
   gridContainer: {
-    backgroundColor: "lightgray",
-    height: "100%",
-    padding: 6,
-  },
-  chatMessagesDiv: {
-    backgroundColor: "lightblue",
-    flex: 1,
     display: "flex",
     flexDirection: "column",
+    backgroundColor: "#d1d1d1",
   },
-  chatInput: {
-    backgroundColor: "lightyellow",
+  chatHeader: {
+    backgroundColor: "#9A9AA9",
+    color: "white",
+    padding: 6,
+    borderBottom: "1px solid black",
+  },
+  chatMessagesDiv: {
+    flex: 1,
+    overflowY: "scroll",
+  },
+  chatInputDiv: {
+    marginLeft: 10,
+    marginRight: 10,
   },
 });
 
@@ -80,23 +85,22 @@ export default function ChatBody({ contactProp }: Props): ReactElement {
   }, [contactProp]);
 
   return (
-    <Grid
-      container
-      direction="column"
-      justify="space-between"
-      className={classes.gridContainer}
-    >
-      {contact && contact.name}
-      <Grid container className={classes.chatMessagesDiv}>
-        {/* {messages.map(message=> <Grid item key={message.key}><Message  /><Grid/>)} */}
+    <Box height="100%" className={classes.gridContainer}>
+      {/* The Header */}
+      <Typography variant="h5" className={classes.chatHeader}>
+        {contact && contact.name}
+      </Typography>
+
+      {/* The Body */}
+      <Box className={classes.chatMessagesDiv}>
         {messages.map((message) => (
-          <Grid item key={message.id}>
-            <Message message={message} isOwn={message.sender === user?.uid} />
-          </Grid>
+          <Message message={message} isOwn={message.sender === user?.uid} />
         ))}
-      </Grid>
-      <form onSubmit={chatFormSubmitHandler}>
-        <Grid item>
+      </Box>
+
+      {/* The Input */}
+      <Box className={classes.chatInputDiv}>
+        <form onSubmit={chatFormSubmitHandler}>
           <TextField
             inputRef={inputRef}
             variant="filled"
@@ -104,10 +108,10 @@ export default function ChatBody({ contactProp }: Props): ReactElement {
             margin="dense"
             color="primary"
             rows={4}
-            className={classes.chatInput}
+            required
           />
-        </Grid>
-      </form>
-    </Grid>
+        </form>
+      </Box>
+    </Box>
   );
 }
