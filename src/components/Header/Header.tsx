@@ -5,7 +5,11 @@ import {
   makeStyles,
   Toolbar,
   Typography,
+  IconButton,
+  useMediaQuery,
+  useTheme,
 } from "@material-ui/core";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import { ReactElement } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
@@ -24,21 +28,26 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
   button: {
-    margin: "15px",
+    marginLeft: "10px",
   },
 }));
 
 export default function Header(): ReactElement {
-  const classes = useStyles();
   const { user, logout } = useAuth();
   const history = useHistory();
+
+  const classes = useStyles();
+  const theme = useTheme();
+
+  const sm = useMediaQuery(theme.breakpoints.up("sm"));
 
   return (
     <CssBaseline>
       <AppBar className={classes.appBar} position="sticky" color="primary">
         <Toolbar>
+          {/* The header */}
           <Typography
-            variant="h4"
+            variant={sm ? "h4" : "h6"}
             className={classes.title}
             onClick={() => history.push("/")}
           >
@@ -46,11 +55,27 @@ export default function Header(): ReactElement {
           </Typography>
           {user ? (
             <div className={classes.authDiv}>
-              <Typography variant="h6" align="center">
+              {/* The settings button */}
+              <IconButton
+                color="inherit"
+                onClick={() => history.push("/settings")}
+              >
+                <AccountCircleIcon fontSize="large" />
+              </IconButton>
+
+              {/* Display user */}
+              <Typography
+                variant={sm ? "h6" : "body1"}
+                hidden={!sm}
+                align="center"
+              >
                 {user && user.email}
               </Typography>
+
+              {/* Button to logout */}
               <Button
                 variant="contained"
+                size={sm ? "medium" : "small"}
                 className={classes.button}
                 onClick={logout}
               >
@@ -59,11 +84,14 @@ export default function Header(): ReactElement {
             </div>
           ) : (
             <div className={classes.authDiv}>
+              {/* Login route button */}
               <Link to="/auth/login">
                 <Button variant="contained" className={classes.button}>
                   Login
                 </Button>
               </Link>
+
+              {/* Signup route button */}
               <Link to="/auth/signup">
                 <Button variant="contained" className={classes.button}>
                   Signup
