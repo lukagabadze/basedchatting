@@ -3,14 +3,16 @@ import {
   Box,
   List,
   ListItem,
+  ListItemText,
   makeStyles,
   Typography,
   Fab,
+  ListItemIcon,
 } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
+import GroupAddIcon from "@material-ui/icons/GroupAdd";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddContactDialog from "./AddContactDialog";
 import { database } from "../../../firebase";
-import Contact from "./Contact";
 import { useAuth } from "../../../contexts/AuthContext";
 
 interface Props {
@@ -90,17 +92,24 @@ export default function Contacts({ setContactHandler }: Props): ReactElement {
           className={classes.addContactButton}
           onClick={handleToggle}
         >
-          <AddIcon />
+          <GroupAddIcon />
         </Fab>
       </Box>
       <List className={classes.list}>
         {contacts.map((contact) => {
           return (
-            <ListItem key={contact.id} dense disableGutters divider>
-              <Contact
-                contactProp={contact}
-                setContactHandler={setContactHandler}
-              />
+            <ListItem
+              key={contact.id}
+              button
+              dense
+              disableGutters
+              divider
+              onClick={() => setContactHandler(contact)}
+            >
+              <ListItemIcon>
+                <AccountCircleIcon style={{ margin: "auto" }} />
+              </ListItemIcon>
+              <ListItemText primary={contact.name} />
             </ListItem>
           );
         })}
