@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useRef, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import {
   Button,
   Checkbox,
@@ -38,7 +38,7 @@ export default function AddContactDialogue({
   const classes = useStyles();
   const [users, setUsers] = useState<UserType[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<UserType[]>([]);
-  const contactNameRef = useRef<HTMLInputElement>(null);
+  const [contactName, setContactName] = useState<string>("");
 
   useEffect(() => {
     async function fetchUsers() {
@@ -76,9 +76,9 @@ export default function AddContactDialogue({
   function onSubmitHandler(e: React.FormEvent) {
     e.preventDefault();
     if (!user) return;
-    if (!contactNameRef.current) return;
+    if (!contactName) return;
+    if (selectedUsers.length === 0) return;
 
-    const contactName = contactNameRef.current.value;
     const userUids: string[] = [];
     selectedUsers.map(({ uid }) => {
       userUids.push(uid);
@@ -96,8 +96,10 @@ export default function AddContactDialogue({
 
     handleToggle();
     setSelectedUsers([]);
-    contactNameRef.current.value = "";
+    setContactName("");
   }
+
+  const formValid: boolean = contactName && selectedUsers.length ? true : false;
 
   return (
     <Dialog open={open} onClose={handleToggle} fullWidth maxWidth="sm">
@@ -106,7 +108,10 @@ export default function AddContactDialogue({
       <form onSubmit={onSubmitHandler}>
         <DialogContent>
           <Input
-            inputRef={contactNameRef}
+            value={contactName}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setContactName(e.target.value);
+            }}
             placeholder="Contact name"
             fullWidth
             required
@@ -129,7 +134,13 @@ export default function AddContactDialogue({
               );
             })}
           </List>
-          <Button type="submit" variant="contained" color="primary" fullWidth>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            disabled={!formValid}
+          >
             Submit
           </Button>
         </DialogContent>
