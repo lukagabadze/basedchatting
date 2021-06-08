@@ -16,13 +16,12 @@ const useStyles = makeStyles({
     flexDirection: "row",
   },
   messagePaper: {
-    overflow: "hidden",
-    textOverflow: "ellipsis",
+    wordBreak: "break-word",
     padding: 3,
     margin: 5,
     display: "flex",
     flexDirection: "row",
-    maxWidth: "200px",
+    maxWidth: "400px",
     minWidth: "100px",
   },
 
