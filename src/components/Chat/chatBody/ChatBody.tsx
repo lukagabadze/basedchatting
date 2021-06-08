@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState, useRef } from "react";
+import React, { ReactElement, useEffect, useState, useRef } from "react";
 import { Box, makeStyles, TextField, Typography } from "@material-ui/core";
 import { ContactType } from "../contacts/Contacts";
 import { useAuth } from "../../../contexts/AuthContext";
@@ -29,6 +29,7 @@ const useStyles = makeStyles({
     marginLeft: 10,
     marginRight: 10,
   },
+  chatInput: { backgroundColor: "white" },
 });
 
 export default function ChatBody({ contactProp }: Props): ReactElement {
@@ -37,12 +38,14 @@ export default function ChatBody({ contactProp }: Props): ReactElement {
   const [contact, setContact] = useState<ContactType | null>(contactProp);
   const [messages, setMessages] = useState<MessageType[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+  const chatDivRef = useRef<HTMLDivElement>(null);
 
-  const chatFormSubmitHandler = (e: React.FormEvent) => {
+  const chatFormSubmitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return alert("You must be logged in!");
-    if (!inputRef.current) return;
     if (!contact) return;
+    if (!inputRef.current) return;
+    if (!chatDivRef.current) return;
 
     const newMessage = {
       text: inputRef.current.value,
@@ -50,8 +53,11 @@ export default function ChatBody({ contactProp }: Props): ReactElement {
       contactId: contact.id,
       createdAt: Date.now(),
     };
-    database.collection(`messages`).add(newMessage);
+    await database.collection(`messages`).add(newMessage);
     inputRef.current.value = "";
+    // chatDivRef.current.scrollTo(0, chatDivRef.current.clientHeight);
+    chatDivRef.current.scrollTop = chatDivRef.current.scrollHeight;
+    // chatDivRef.current.scrollIntoView(false);
   };
 
   useEffect(() => {
@@ -92,23 +98,24 @@ export default function ChatBody({ contactProp }: Props): ReactElement {
       </Typography>
 
       {/* The Body */}
-      <Box className={classes.chatMessagesDiv}>
+      <div ref={chatDivRef} className={classes.chatMessagesDiv}>
         {messages.map((message) => (
           <Message message={message} isOwn={message.sender === user?.uid} />
         ))}
-      </Box>
+      </div>
 
       {/* The Input */}
       <Box className={classes.chatInputDiv}>
         <form onSubmit={chatFormSubmitHandler}>
           <TextField
             inputRef={inputRef}
-            variant="filled"
+            variant="outlined"
             fullWidth
             margin="dense"
             color="primary"
             rows={4}
             required
+            InputProps={{ className: classes.chatInput }}
           />
         </form>
       </Box>
