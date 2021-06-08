@@ -10,7 +10,10 @@ import { ReactElement } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
+  appBar: {
+    zIndex: theme.zIndex.drawer + 1,
+  },
   title: {
     flexGrow: 1,
     cursor: "pointer",
@@ -23,7 +26,7 @@ const useStyles = makeStyles({
   button: {
     margin: "15px",
   },
-});
+}));
 
 export default function Header(): ReactElement {
   const classes = useStyles();
@@ -32,7 +35,7 @@ export default function Header(): ReactElement {
 
   return (
     <CssBaseline>
-      <AppBar position="sticky" color="primary">
+      <AppBar className={classes.appBar} position="sticky" color="primary">
         <Toolbar>
           <Typography
             variant="h4"

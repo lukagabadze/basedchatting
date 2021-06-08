@@ -11,6 +11,7 @@ interface Props {
 
 const useStyles = makeStyles({
   gridContainer: {
+    marginLeft: "350px",
     display: "flex",
     flexDirection: "column",
     backgroundColor: "#d1d1d1",
@@ -100,7 +101,11 @@ export default function ChatBody({ contactProp }: Props): ReactElement {
       {/* The Body */}
       <div ref={chatDivRef} className={classes.chatMessagesDiv}>
         {messages.map((message) => (
-          <Message message={message} isOwn={message.sender === user?.uid} />
+          <Message
+            key={message.id}
+            message={message}
+            isOwn={message.sender === user?.uid}
+          />
         ))}
       </div>
 

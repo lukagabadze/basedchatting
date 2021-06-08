@@ -8,6 +8,7 @@ import {
   Typography,
   Fab,
   ListItemIcon,
+  Drawer,
 } from "@material-ui/core";
 import GroupAddIcon from "@material-ui/icons/GroupAdd";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
@@ -19,10 +20,11 @@ interface Props {
   setContactHandler: (contact: ContactType) => void;
 }
 
-const useStyles = makeStyles({
-  contactsBox: {
+const useStyles = makeStyles((theme) => ({
+  contactsDrawer: {
     direction: "rtl",
-    height: "100%",
+    width: 500,
+    flexShrink: 0,
     overflow: "auto",
   },
   list: {
@@ -39,7 +41,8 @@ const useStyles = makeStyles({
     margin: "10px",
   },
   addContactButton: {},
-});
+  toolbar: theme.mixins.toolbar,
+}));
 
 export type ContactType = {
   id: string;
@@ -84,7 +87,13 @@ export default function Contacts({ setContactHandler }: Props): ReactElement {
   }, [user]);
 
   return (
-    <Box className={classes.contactsBox}>
+    <Drawer
+      className={classes.contactsDrawer}
+      variant="permanent"
+      anchor="left"
+      open
+    >
+      <div className={classes.toolbar}></div>
       <Box className={classes.contactsHeader}>
         <Typography variant="h3">Contacts</Typography>
         <Fab
@@ -115,6 +124,6 @@ export default function Contacts({ setContactHandler }: Props): ReactElement {
         })}
       </List>
       <AddContactDialog open={open} handleToggle={handleToggle} />
-    </Box>
+    </Drawer>
   );
 }
