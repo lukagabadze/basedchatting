@@ -47,17 +47,17 @@ export default function ChatBody({ contactProp }: Props): ReactElement {
     if (!inputRef.current) return;
     if (!chatDivRef.current) return;
 
+    const text = inputRef.current.value;
+    inputRef.current.value = "";
+
     const newMessage = {
-      text: inputRef.current.value,
+      text,
       sender: user.uid,
       contactId: contact.id,
       createdAt: Date.now(),
     };
     await database.collection(`messages`).add(newMessage);
-    inputRef.current.value = "";
-    // chatDivRef.current.scrollTo(0, chatDivRef.current.clientHeight);
     chatDivRef.current.scrollTop = chatDivRef.current.scrollHeight;
-    // chatDivRef.current.scrollIntoView(false);
   };
 
   useEffect(() => {
