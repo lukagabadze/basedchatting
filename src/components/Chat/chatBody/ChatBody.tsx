@@ -4,6 +4,7 @@ import { ContactType } from "../contacts/Contacts";
 import { useAuth } from "../../../contexts/AuthContext";
 import { database } from "../../../firebase";
 import Message, { MessageType } from "./Message";
+import { contactsWidth } from "../contacts/Contacts";
 
 interface Props {
   contactProp: ContactType | null;
@@ -11,7 +12,7 @@ interface Props {
 
 const useStyles = makeStyles({
   gridContainer: {
-    marginLeft: "350px",
+    marginLeft: contactsWidth,
     display: "flex",
     flexDirection: "column",
     backgroundColor: "#d1d1d1",

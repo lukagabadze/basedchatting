@@ -20,11 +20,11 @@ interface Props {
   setContactHandler: (contact: ContactType) => void;
 }
 
+export const contactsWidth = 300;
+
 const useStyles = makeStyles((theme) => ({
   contactsDrawer: {
     direction: "rtl",
-    width: 500,
-    flexShrink: 0,
     overflow: "auto",
   },
   list: {
@@ -38,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "space-between",
     flexDirection: "row-reverse",
+    alignItems: "center",
     margin: "10px",
   },
   addContactButton: {},
@@ -54,11 +55,12 @@ export type ContactType = {
 export default function Contacts({ setContactHandler }: Props): ReactElement {
   const { user } = useAuth();
   const classes = useStyles();
-  const [open, setOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(true);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [contacts, setContacts] = useState<ContactType[]>([]);
 
   const handleToggle = () => {
-    return setOpen(!open);
+    return setDialogOpen(!dialogOpen);
   };
 
   useEffect(() => {
@@ -89,15 +91,19 @@ export default function Contacts({ setContactHandler }: Props): ReactElement {
   return (
     <Drawer
       className={classes.contactsDrawer}
-      variant="permanent"
+      variant="persistent"
       anchor="left"
-      open
+      open={drawerOpen}
+      PaperProps={{ style: { width: contactsWidth } }}
     >
-      <div className={classes.toolbar}></div>
+      <div className={classes.toolbar} />
       <Box className={classes.contactsHeader}>
-        <Typography variant="h3">Contacts</Typography>
+        <Typography align="center" variant="h5">
+          Contacts
+        </Typography>
         <Fab
           color="primary"
+          size="small"
           className={classes.addContactButton}
           onClick={handleToggle}
         >
@@ -116,14 +122,17 @@ export default function Contacts({ setContactHandler }: Props): ReactElement {
               onClick={() => setContactHandler(contact)}
             >
               <ListItemIcon>
-                <AccountCircleIcon style={{ margin: "auto" }} />
+                <AccountCircleIcon
+                  fontSize="large"
+                  style={{ margin: "auto" }}
+                />
               </ListItemIcon>
               <ListItemText primary={contact.name} />
             </ListItem>
           );
         })}
       </List>
-      <AddContactDialog open={open} handleToggle={handleToggle} />
+      <AddContactDialog open={dialogOpen} handleToggle={handleToggle} />
     </Drawer>
   );
 }
