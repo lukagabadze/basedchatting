@@ -5,11 +5,10 @@ import React, {
   useState,
   useEffect,
 } from "react";
-import firebase from "firebase/app";
 import { auth, database } from "../firebase";
 
 type AuthContextType = {
-  user: firebase.User | null;
+  user: UserType | null;
   signup(email: string, password: string): void;
   login(email: string, password: string): void;
   logout: () => void;
@@ -38,12 +37,23 @@ export type UserType = {
 };
 
 export function AuthProvider({ children }: Props): ReactElement {
-  const [user, setUser] = useState<firebase.User | null>(null);
+  const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user);
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (!user) return setUser(null);
+
+      const snapshot = await database.collection("users").doc(user.uid).get();
+      const data = snapshot.data();
+      if (!data) return;
+
+      const { uid, email, displayName } = data;
+      setUser({
+        uid,
+        email,
+        displayName,
+      });
       setLoading(false);
     });
 
