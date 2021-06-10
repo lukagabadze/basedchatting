@@ -3,6 +3,7 @@ import Auth from "./Auth/Auth";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Chat from "./Chat/Chat";
 import PrivateRoute from "./PrivateRoute";
+import Settings from "./Settings/Settings";
 
 function App() {
   return (
@@ -25,7 +26,8 @@ function App() {
             <Route path="/auth">
               <Auth />
             </Route>
-            <PrivateRoute path="" component={Chat} />
+            <PrivateRoute path="/settings" component={Settings} />
+            <PrivateRoute path="/" component={Chat} />
           </Switch>
         </div>
       </div>
