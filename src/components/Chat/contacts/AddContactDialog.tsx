@@ -49,11 +49,12 @@ export default function AddContactDialogue({
 
       let usersList: UserType[] = [];
       snapshot.forEach((doc) => {
-        const { email, displayName } = doc.data();
+        const { email, displayName, imageUrl } = doc.data();
         usersList.push({
           uid: doc.id,
           email,
           displayName,
+          imageUrl,
         });
       });
       setUsers(usersList);
