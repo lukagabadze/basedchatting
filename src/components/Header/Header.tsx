@@ -8,6 +8,7 @@ import {
   IconButton,
   useMediaQuery,
   useTheme,
+  Avatar,
 } from "@material-ui/core";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import { ReactElement } from "react";
@@ -60,7 +61,11 @@ export default function Header(): ReactElement {
                 color="inherit"
                 onClick={() => history.push("/settings")}
               >
-                <AccountCircleIcon fontSize="large" />
+                {user.imageUrl ? (
+                  <Avatar src={user.imageUrl} />
+                ) : (
+                  <AccountCircleIcon fontSize="large" />
+                )}
               </IconButton>
 
               {/* Display user */}
