@@ -7,7 +7,7 @@ import Message, { MessageType } from "./Message";
 import { contactsWidth } from "../contacts/Contacts";
 
 interface Props {
-  contactProp: ContactType | null;
+  contactProp: ContactType;
 }
 
 const useStyles = makeStyles({
@@ -34,11 +34,18 @@ const useStyles = makeStyles({
   chatInput: { backgroundColor: "white" },
 });
 
+interface profileImageMap {
+  [key: string]: string;
+}
+
 export default function ChatBody({ contactProp }: Props): ReactElement {
   const classes = useStyles();
   const { user } = useAuth();
+
   const [contact, setContact] = useState<ContactType | null>(contactProp);
   const [messages, setMessages] = useState<MessageType[]>([]);
+  const [profileImageMap, setProfileImageMap] = useState<profileImageMap>({});
+
   const inputRef = useRef<HTMLInputElement>(null);
   const chatDivRef = useRef<HTMLDivElement>(null);
 
@@ -65,6 +72,7 @@ export default function ChatBody({ contactProp }: Props): ReactElement {
   useEffect(() => {
     setContact(contactProp);
 
+    // Fetch messages
     async function fetchMessages() {
       if (!contactProp) return;
 
@@ -89,6 +97,27 @@ export default function ChatBody({ contactProp }: Props): ReactElement {
         });
     }
 
+    // Fetch and map all the members profile images
+    function fetchAndMapUsers() {
+      if (!contact) return;
+      const members = contact.members;
+
+      const usersRef = database.collection("users");
+      let imageUrlMap: profileImageMap = { ...profileImageMap };
+      members.map(async (uid) => {
+        const snapshot = await usersRef.doc(uid).get();
+        const data = snapshot.data();
+        if (!data) return;
+        if ("imageUrl" in data) {
+          imageUrlMap[uid] = data.imageUrl;
+        } else {
+          imageUrlMap[uid] = "";
+        }
+      });
+      setProfileImageMap(imageUrlMap);
+    }
+
+    fetchAndMapUsers();
     fetchMessages();
   }, [contactProp]);
 
@@ -106,6 +135,7 @@ export default function ChatBody({ contactProp }: Props): ReactElement {
             key={message.id}
             message={message}
             isOwn={message.sender === user?.uid}
+            userImageUrl={profileImageMap[message.sender]}
           />
         ))}
       </div>

@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import { Typography, makeStyles, Paper, Box } from "@material-ui/core";
+import { Typography, makeStyles, Paper, Box, Avatar } from "@material-ui/core";
 import clsx from "clsx";
 
 export type MessageType = {
@@ -10,15 +10,16 @@ export type MessageType = {
   createdAt: Date;
 };
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   messageDiv: {
     display: "flex",
-    flexDirection: "row",
+    margin: theme.spacing(1),
   },
   messagePaper: {
     wordBreak: "break-word",
-    padding: 3,
-    margin: 5,
+    padding: theme.spacing(1),
+    marginLeft: 3,
+    marginRight: 3,
     display: "flex",
     flexDirection: "row",
     maxWidth: "400px",
@@ -32,20 +33,29 @@ const useStyles = makeStyles({
     backgroundColor: "#6969FF",
     color: "white",
   },
-});
+}));
 
 interface Props {
   message: MessageType;
   isOwn: boolean;
+  userImageUrl: string;
 }
 
-export default function Message({ message, isOwn }: Props): ReactElement {
+export default function Message({
+  message,
+  isOwn,
+  userImageUrl,
+}: Props): ReactElement {
   const classes = useStyles();
 
   return (
-    <Box className={classes.messageDiv} style={{ flexDirection: "revert" }}>
-      <div style={{ flexGrow: 1, display: isOwn ? "block" : "none" }}></div>
-
+    <Box
+      className={classes.messageDiv}
+      style={
+        isOwn ? { flexDirection: "row-reverse" } : { flexDirection: "row" }
+      }
+    >
+      {userImageUrl && <Avatar src={userImageUrl} />}
       <Paper
         elevation={3}
         className={clsx(
@@ -53,11 +63,7 @@ export default function Message({ message, isOwn }: Props): ReactElement {
           isOwn ? classes.messageOwn : classes.messageOther
         )}
       >
-        <Typography
-          // align={isOwn ? "right" : "left"}
-          gutterBottom
-          paragraph
-        >
+        <Typography gutterBottom paragraph>
           {message.text}
         </Typography>
       </Paper>
