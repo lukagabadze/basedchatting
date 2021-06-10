@@ -44,17 +44,21 @@ export function AuthProvider({ children }: Props): ReactElement {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (!user) return setUser(null);
 
-      const snapshot = await database.collection("users").doc(user.uid).get();
-      const data = snapshot.data();
-      if (!data) return;
+      database
+        .collection("users")
+        .doc(user.uid)
+        .onSnapshot((snapshot) => {
+          const data = snapshot.data();
+          if (!data) return;
 
-      const { uid, email, displayName } = data;
-      setUser({
-        uid,
-        email,
-        displayName,
-      });
-      setLoading(false);
+          const { uid, email, displayName } = data;
+          setUser({
+            uid,
+            email,
+            displayName,
+          });
+          setLoading(false);
+        });
     });
 
     return unsubscribe;
