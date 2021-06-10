@@ -5,7 +5,7 @@ import React, {
   useState,
   useEffect,
 } from "react";
-import { auth, database, storage } from "../firebase";
+import { auth, database } from "../firebase";
 
 type AuthContextType = {
   user: UserType | null;
@@ -52,15 +52,7 @@ export function AuthProvider({ children }: Props): ReactElement {
           const data = snapshot.data();
           if (!data) return;
 
-          const { uid, email, displayName, image } = data;
-
-          let imageUrl: string | null = null;
-          await storage
-            .ref(`profile-images/${image}`)
-            .getDownloadURL()
-            .then((url: string) => {
-              imageUrl = url;
-            });
+          const { uid, email, displayName, imageUrl } = data;
 
           setUser({
             uid,

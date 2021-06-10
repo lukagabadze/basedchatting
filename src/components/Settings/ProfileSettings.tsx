@@ -31,7 +31,9 @@ export default function ProfileSettings(): ReactElement {
 
   const [nameInput, setNameInput] = useState(user ? user.displayName : "");
   const [image, setImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    user ? user.imageUrl : null
+  );
   const [loading, setLoading] = useState<boolean>(false);
 
   if (!user) return <Typography variant="h1">You must be logged in</Typography>;
@@ -62,6 +64,7 @@ export default function ProfileSettings(): ReactElement {
     await database.collection("users").doc(user.uid).update(updatedUser);
 
     setLoading(false);
+    setImage(null);
   }
 
   return (
