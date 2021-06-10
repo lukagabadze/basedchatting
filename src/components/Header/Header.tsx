@@ -69,7 +69,7 @@ export default function Header(): ReactElement {
                 hidden={!sm}
                 align="center"
               >
-                {user && user.email}
+                {user && user.displayName}
               </Typography>
 
               {/* Button to logout */}
