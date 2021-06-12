@@ -54,7 +54,6 @@ export default function ChatBody({ contactProp }: Props): ReactElement {
     if (!user) return alert("You must be logged in!");
     if (!contact) return;
     if (!inputRef.current) return;
-    if (!chatDivRef.current) return;
 
     const text = inputRef.current.value;
     inputRef.current.value = "";
@@ -66,7 +65,6 @@ export default function ChatBody({ contactProp }: Props): ReactElement {
       createdAt: Date.now(),
     };
     await database.collection(`messages`).add(newMessage);
-    chatDivRef.current.scrollTop = chatDivRef.current.scrollHeight;
   };
 
   useEffect(() => {
@@ -117,9 +115,14 @@ export default function ChatBody({ contactProp }: Props): ReactElement {
       setProfileImageMap(imageUrlMap);
     }
 
-    fetchAndMapUsers();
     fetchMessages();
+    fetchAndMapUsers();
   }, [contactProp]);
+
+  useEffect(() => {
+    if (!chatDivRef.current) return;
+    chatDivRef.current.scrollTop = chatDivRef.current.scrollHeight;
+  }, [messages]);
 
   return (
     <Box height="100%" className={classes.gridContainer}>
