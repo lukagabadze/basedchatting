@@ -6,21 +6,20 @@ import React, {
   useEffect,
 } from "react";
 import { auth, database } from "../firebase";
+import firebase from "firebase";
 
 type AuthContextType = {
   user: UserType | null;
-  signup(email: string, password: string): void;
-  login(email: string, password: string): void;
+  signup(
+    email: string,
+    password: string
+  ): Promise<firebase.auth.UserCredential>;
+  login(email: string, password: string): Promise<firebase.auth.UserCredential>;
   logout: () => void;
-};
-const defaultValue = {
-  user: null,
-  signup: () => {},
-  login: () => {},
-  logout: () => {},
+  saveUserInfo: () => void;
 };
 
-const AuthContext = createContext<AuthContextType>(defaultValue);
+const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export function useAuth() {
   return useContext(AuthContext);
@@ -60,23 +59,15 @@ export function AuthProvider({ children }: Props): ReactElement {
             displayName,
             imageUrl,
           });
-          setLoading(false);
         });
     });
+    setLoading(false);
 
     return unsubscribe;
   }, []);
 
   async function signup(email: string, password: string) {
-    const { user } = await auth.createUserWithEmailAndPassword(email, password);
-    if (!user) return;
-
-    const usersRef = database.collection("users").doc(user.uid);
-    usersRef.set({
-      uid: user.uid,
-      email: user.email,
-      displayName: user.email,
-    });
+    return auth.createUserWithEmailAndPassword(email, password);
   }
 
   function login(email: string, password: string) {
@@ -87,11 +78,23 @@ export function AuthProvider({ children }: Props): ReactElement {
     return auth.signOut();
   }
 
+  function saveUserInfo() {
+    if (!user) return;
+
+    const usersRef = database.collection("users").doc(user.uid);
+    usersRef.set({
+      uid: user.uid,
+      email: user.email,
+      displayName: user.email,
+    });
+  }
+
   const value = {
     user,
     signup,
     login,
     logout,
+    saveUserInfo,
   };
 
   return (
