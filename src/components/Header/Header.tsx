@@ -9,9 +9,16 @@ import {
   useMediaQuery,
   useTheme,
   Avatar,
+  MenuItem,
+  MenuList,
+  Popover,
+  ListItemIcon,
+  ListItemText,
 } from "@material-ui/core";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import { ReactElement } from "react";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import SettingsIcon from "@material-ui/icons/Settings";
+import { ReactElement, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -34,13 +41,32 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Header(): ReactElement {
+  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+
   const { user, logout } = useAuth();
   const history = useHistory();
-
   const classes = useStyles();
   const theme = useTheme();
 
   const sm = useMediaQuery(theme.breakpoints.up("sm"));
+
+  function handleMenuClick(e: React.MouseEvent<HTMLButtonElement>) {
+    setAnchor(e.currentTarget);
+  }
+
+  function handleMenuClose() {
+    setAnchor(null);
+  }
+
+  function handleSettings() {
+    history.push("/settings");
+    handleMenuClose();
+  }
+
+  function handleLogout() {
+    logout();
+    handleMenuClose();
+  }
 
   return (
     <CssBaseline>
@@ -48,44 +74,58 @@ export default function Header(): ReactElement {
         <Toolbar>
           {/* The header */}
           <Typography
-            variant={sm ? "h4" : "h6"}
+            variant={sm ? "h4" : "body1"}
             className={classes.title}
             onClick={() => history.push("/")}
           >
             BasedChatting
           </Typography>
+
+          {/* User menu */}
+          <Popover
+            open={Boolean(anchor)}
+            anchorEl={anchor}
+            onClose={handleMenuClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+          >
+            <MenuList>
+              <MenuItem onClick={handleSettings}>
+                <ListItemIcon>
+                  <SettingsIcon />
+                </ListItemIcon>
+                <ListItemText primary="Settings" />
+              </MenuItem>
+              <MenuItem onClick={handleLogout}>
+                <ListItemIcon>
+                  <ExitToAppIcon />
+                </ListItemIcon>
+                <ListItemText primary="Logout" />
+              </MenuItem>
+            </MenuList>
+          </Popover>
+
           {user ? (
             <div className={classes.authDiv}>
+              {/* Display user */}
+              <Typography variant={sm ? "h5" : "h6"} align="center">
+                {user && user.displayName}
+              </Typography>
+
               {/* The settings button */}
-              <IconButton
-                color="inherit"
-                onClick={() => history.push("/settings")}
-              >
+              <IconButton color="inherit" onClick={handleMenuClick}>
                 {user.imageUrl ? (
                   <Avatar src={user.imageUrl} />
                 ) : (
                   <AccountCircleIcon fontSize="large" />
                 )}
               </IconButton>
-
-              {/* Display user */}
-              <Typography
-                variant={sm ? "h6" : "body1"}
-                hidden={!sm}
-                align="center"
-              >
-                {user && user.displayName}
-              </Typography>
-
-              {/* Button to logout */}
-              <Button
-                variant="contained"
-                size={sm ? "medium" : "small"}
-                className={classes.button}
-                onClick={logout}
-              >
-                Logout
-              </Button>
             </div>
           ) : (
             <div className={classes.authDiv}>
