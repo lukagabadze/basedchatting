@@ -46,7 +46,6 @@ export default function AvatarProvider({ children }: Props): ReactElement {
 
   // Fetch and map all the members profile images
   function fetchAndMapUsers(members: string[]) {
-    console.log(members);
     const usersRef = database.collection("users");
     members.map(async (uid) => {
       const snapshot = await usersRef.doc(uid).get();

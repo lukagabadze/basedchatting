@@ -7,8 +7,8 @@ interface Props {}
 export default function Chat({}: Props): ReactElement {
   const [contact, setContact] = useState<ContactType | null>(null);
 
-  const setContactHandler = (contact: ContactType) => {
-    setContact(contact);
+  const setContactHandler = (newContact: ContactType) => {
+    setContact(newContact);
   };
 
   return (
