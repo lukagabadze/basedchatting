@@ -17,6 +17,7 @@ import { database } from "../../../firebase";
 import { useAuth } from "../../../contexts/AuthContext";
 
 interface Props {
+  chosenContact: ContactType | null;
   setContactHandler: (contact: ContactType) => void;
 }
 
@@ -52,7 +53,10 @@ export type ContactType = {
   createdAt: Date;
 };
 
-export default function Contacts({ setContactHandler }: Props): ReactElement {
+export default function Contacts({
+  chosenContact,
+  setContactHandler,
+}: Props): ReactElement {
   const { user } = useAuth();
   const classes = useStyles();
   const [drawerOpen, setDrawerOpen] = useState(true);
@@ -120,6 +124,9 @@ export default function Contacts({ setContactHandler }: Props): ReactElement {
               disableGutters
               divider
               onClick={() => setContactHandler(contact)}
+              selected={Boolean(
+                chosenContact && chosenContact.id === contact.id
+              )}
             >
               <ListItemIcon>
                 <AccountCircleIcon

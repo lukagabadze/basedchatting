@@ -13,7 +13,7 @@ export default function Chat({}: Props): ReactElement {
 
   return (
     <div style={{ height: "100%" }}>
-      <Contacts setContactHandler={setContactHandler} />
+      <Contacts chosenContact={contact} setContactHandler={setContactHandler} />
       {contact && <ChatBody contactProp={contact} />}
     </div>
   );
