@@ -5,9 +5,12 @@ import { useAuth } from "../../../contexts/AuthContext";
 import { database } from "../../../firebase";
 import { contactsWidth } from "../contacts/Contacts";
 import Messages from "./Messages";
+import { MessagesType } from "../Chat";
 
 interface Props {
   contactProp: ContactType;
+  messages: MessagesType;
+  loading: boolean;
 }
 
 const useStyles = makeStyles({
@@ -34,7 +37,11 @@ const useStyles = makeStyles({
   chatInput: { backgroundColor: "white" },
 });
 
-export default function ChatBody({ contactProp }: Props): ReactElement {
+export default function ChatBody({
+  contactProp,
+  messages,
+  loading,
+}: Props): ReactElement {
   const [contact, setContact] = useState<ContactType | null>(contactProp);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -72,7 +79,11 @@ export default function ChatBody({ contactProp }: Props): ReactElement {
 
       {/* The Messages */}
       <div className={classes.chatMessagesDiv}>
-        {contact && <Messages contact={contact} />}
+        {!loading ? (
+          contact && <Messages messages={messages[contact.id]} />
+        ) : (
+          <Typography variant="h4">Loading...</Typography>
+        )}
       </div>
 
       {/* The Input */}

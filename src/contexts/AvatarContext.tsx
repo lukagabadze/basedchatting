@@ -9,7 +9,7 @@ import { database } from "../firebase";
 
 type AvatarContextType = {
   userAvatarMap: userAvatarMapType;
-  fetchAndMapUsers(members: string[]): userAvatarMapType;
+  fetchAndMapUsers(members?: string[]): userAvatarMapType;
 };
 
 const defaultValue = {
@@ -21,7 +21,7 @@ const defaultValue = {
 
 const AvatarContext = createContext<AvatarContextType>(defaultValue);
 
-export function useAvatar(members: string[]) {
+export function useAvatar(members?: string[]) {
   const { fetchAndMapUsers } = useContext(AvatarContext);
   return fetchAndMapUsers(members);
 }
@@ -45,7 +45,11 @@ export default function AvatarProvider({ children }: Props): ReactElement {
   }, [render]);
 
   // Fetch and map all the members profile images
-  function fetchAndMapUsers(members: string[]) {
+  function fetchAndMapUsers(members?: string[]) {
+    if (!members) {
+      return avatarUrlMap;
+    }
+
     const usersRef = database.collection("users");
     members.map(async (uid) => {
       const snapshot = await usersRef.doc(uid).get();
