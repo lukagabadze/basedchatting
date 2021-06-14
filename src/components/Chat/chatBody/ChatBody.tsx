@@ -1,11 +1,10 @@
-import React, { ReactElement, useEffect, useState, useRef } from "react";
-import { Box, makeStyles, TextField, Typography } from "@material-ui/core";
+import { ReactElement, useEffect, useState } from "react";
+import { Box, makeStyles, Typography } from "@material-ui/core";
 import { ContactType } from "../contacts/Contacts";
-import { useAuth } from "../../../contexts/AuthContext";
-import { database } from "../../../firebase";
 import { contactsWidth } from "../contacts/Contacts";
 import Messages from "./Messages";
 import { MessagesType } from "../Chat";
+import ChatInput from "./ChatInput";
 
 interface Props {
   contactProp: ContactType;
@@ -34,7 +33,6 @@ const useStyles = makeStyles({
     marginLeft: 10,
     marginRight: 10,
   },
-  chatInput: { backgroundColor: "white" },
 });
 
 export default function ChatBody({
@@ -43,32 +41,12 @@ export default function ChatBody({
   loading,
 }: Props): ReactElement {
   const [contact, setContact] = useState<ContactType | null>(contactProp);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const classes = useStyles();
-  const { user } = useAuth();
 
   useEffect(() => {
     setContact(contactProp);
   }, [contactProp]);
-
-  const chatFormSubmitHandler = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return alert("You must be logged in!");
-    if (!contact) return;
-    if (!inputRef.current) return;
-
-    const text = inputRef.current.value;
-    inputRef.current.value = "";
-
-    const newMessage = {
-      text,
-      sender: user.uid,
-      contactId: contact.id,
-      createdAt: Date.now(),
-    };
-    await database.collection(`messages`).add(newMessage);
-  };
 
   return (
     <Box height="100%" className={classes.gridContainer}>
@@ -86,20 +64,8 @@ export default function ChatBody({
         )}
       </div>
 
-      {/* The Input */}
       <Box className={classes.chatInputDiv}>
-        <form onSubmit={chatFormSubmitHandler}>
-          <TextField
-            inputRef={inputRef}
-            variant="outlined"
-            fullWidth
-            margin="dense"
-            color="primary"
-            rows={4}
-            required
-            InputProps={{ className: classes.chatInput }}
-          />
-        </form>
+        {contact && <ChatInput contact={contact} />}
       </Box>
     </Box>
   );
