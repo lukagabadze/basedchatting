@@ -1,20 +1,26 @@
 {
-  "name": "basedchatting-api",
+  "name": "basedchatting-server",
   "version": "1.0.0",
-  "description": "api for basedchatting",
-  "main": "app.js",
+  "description": "backend for basedchatting",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "ts-node-dev --respawn server.ts",
+    "build": "tsc"
   },
   "keywords": [
-    "api"
+    "basedchatting",
+    "chat",
+    "sockets"
   ],
   "author": "gabo",
   "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^15.12.2",
+    "ts-node": "^10.0.0",
+    "ts-node-dev": "^1.1.6",
+    "typescript": "^4.3.2"
+  },
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "firebase-admin": "^9.8.0",
     "socket.io": "^4.1.2"
   }
 }
