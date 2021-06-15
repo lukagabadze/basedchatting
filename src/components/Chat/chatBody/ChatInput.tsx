@@ -2,7 +2,7 @@ import React, { ReactElement, useRef } from "react";
 import { makeStyles, TextField } from "@material-ui/core";
 import { ContactType } from "../contacts/Contacts";
 import { useAuth } from "../../../contexts/AuthContext";
-import { database } from "../../../firebase";
+import { useSocket } from "../../../contexts/SocketContext";
 
 const useStyles = makeStyles({
   chatInput: { backgroundColor: "white" },
@@ -17,12 +17,14 @@ export default function ChatInput({ contact }: Props): ReactElement {
 
   const classes = useStyles();
   const { user } = useAuth();
+  const socket = useSocket();
 
   const chatFormSubmitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
     if (!contact) return;
     if (!inputRef.current) return;
+    if (!socket) return;
 
     const text = inputRef.current.value;
     inputRef.current.value = "";
@@ -32,8 +34,10 @@ export default function ChatInput({ contact }: Props): ReactElement {
       sender: user.uid,
       contactId: contact.id,
       createdAt: Date.now(),
+      members: contact.members,
     };
-    await database.collection(`messages`).add(newMessage);
+
+    socket.emit("new-message", newMessage);
   };
 
   return (

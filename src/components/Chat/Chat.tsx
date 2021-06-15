@@ -4,6 +4,8 @@ import ChatBody from "./chatBody/ChatBody";
 import { MessageType } from "./chatBody/Message";
 import { database } from "../../firebase";
 import { useAvatar } from "../../contexts/AvatarContext";
+import { useSocket } from "../../contexts/SocketContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 export type MessagesType = {
   [key: string]: MessageType[];
@@ -13,23 +15,51 @@ export default function Chat(): ReactElement {
   const [contact, setContact] = useState<ContactType | null>(null);
   const [messages, setMessages] = useState<MessagesType>({});
   const [loading, setLoading] = useState(false);
+
   useAvatar(contact?.members);
+  const { user } = useAuth();
+  const socket = useSocket();
 
   const setContactHandler = (newContact: ContactType) => {
     setContact(newContact);
   };
 
   useEffect(() => {
+    if (!user) return;
+    if (!socket) return;
+
+    socket.on(user.uid, (message: MessageType) => {
+      const { contactId } = message;
+
+      if (!message.contactId) return;
+      if (!messages[contactId]) return;
+
+      if (!messages[contactId].includes(message)) {
+        setMessages({
+          ...messages,
+          [contactId]: [...messages[contactId], message],
+        });
+      }
+    });
+
+    return () => {
+      socket.off(user.uid);
+    };
+  }, [messages]);
+
+  useEffect(() => {
     async function fetchMessages() {
+      if (!user) return;
       if (!contact) return;
       if (contact.id in messages) return;
 
       setLoading(true);
-      const messagesRef = database.collection("messages");
-      const snapshot = await messagesRef
+
+      const firestoreMessagesRef = database.collection("messages");
+      const snapshot = await firestoreMessagesRef
         .where("contactId", "==", contact.id)
         .orderBy("createdAt", "desc")
-        .limit(25)
+        .limit(5)
         .get();
 
       let messagesList: MessageType[] = [];
@@ -45,13 +75,11 @@ export default function Chat(): ReactElement {
       });
 
       setLoading(false);
-      setMessages({ ...messages, [contact.id]: messagesList.reverse() });
+      setMessages({ ...messages, [contact.id]: messagesList });
     }
 
     fetchMessages();
   }, [contact]);
-
-  console.log(messages);
 
   return (
     <div style={{ height: "100%" }}>
