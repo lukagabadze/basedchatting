@@ -1,9 +1,8 @@
-import { ReactElement, useState, useEffect } from "react";
+import { ReactElement, useState, useEffect, useCallback } from "react";
 import Contacts, { ContactType } from "./contacts/Contacts";
 import ChatBody from "./chatBody/ChatBody";
 import { MessageType } from "./chatBody/Message";
 import { database } from "../../firebase";
-import { useAvatar } from "../../contexts/AvatarContext";
 import { useSocket } from "../../contexts/SocketContext";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -19,9 +18,9 @@ export default function Chat(): ReactElement {
   const { user } = useAuth();
   const socket = useSocket();
 
-  const setContactHandler = (newContact: ContactType) => {
+  const setContactHandler = useCallback((newContact: ContactType) => {
     setContact(newContact);
-  };
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -44,7 +43,7 @@ export default function Chat(): ReactElement {
     return () => {
       socket.off(user.uid);
     };
-  }, [messages]);
+  }, [socket, user, messages]);
 
   useEffect(() => {
     async function fetchMessages() {
@@ -78,7 +77,7 @@ export default function Chat(): ReactElement {
     }
 
     fetchMessages();
-  }, [contact]);
+  }, [messages, user, contact]);
 
   return (
     <div style={{ height: "100%" }}>

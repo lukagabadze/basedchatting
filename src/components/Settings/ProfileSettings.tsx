@@ -111,7 +111,7 @@ export default function ProfileSettings(): ReactElement {
         {imagePreview && (
           <>
             <br />
-            <img className={classes.imagePreview} src={imagePreview} />
+            <img className={classes.imagePreview} src={imagePreview} alt="" />
           </>
         )}
       </div>

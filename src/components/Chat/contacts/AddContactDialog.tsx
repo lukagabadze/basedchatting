@@ -61,7 +61,7 @@ export default function AddContactDialogue({
     }
 
     fetchUsers();
-  }, []);
+  }, [user]);
 
   function onCheckboxChangeHandler(user: UserType, selected: boolean) {
     let selectedUsersCopy = [...selectedUsers];
@@ -80,9 +80,8 @@ export default function AddContactDialogue({
     if (!contactName) return;
     if (selectedUsers.length === 0) return;
 
-    const userUids: string[] = [];
-    selectedUsers.map(({ uid }) => {
-      userUids.push(uid);
+    const userUids: string[] = selectedUsers.map(({ uid }) => {
+      return uid;
     });
     userUids.push(user.uid);
 

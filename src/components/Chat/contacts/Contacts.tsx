@@ -69,7 +69,6 @@ export default function Contacts({
   chosenContact,
   setContactHandler,
 }: Props): ReactElement {
-  const [drawerOpen, setDrawerOpen] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [contacts, setContacts] = useState<ContactType[]>([]);
 
@@ -82,17 +81,17 @@ export default function Contacts({
   };
 
   useEffect(() => {
-    let allMembers: string[] = [];
     const contactsTmp = [...contacts];
+    let allMembers: string[] = [];
     contactsTmp.map((contact) => {
-      allMembers = [...allMembers, ...contact.members];
+      return (allMembers = [...allMembers, ...contact.members]);
     });
     allMembers = allMembers.filter(
       (member, ind) => allMembers.indexOf(member) === ind
     );
 
     fetchAndMapUsers(allMembers);
-  }, [contacts]);
+  }, [contacts, fetchAndMapUsers]);
 
   useEffect(() => {
     async function fetchContacts() {
@@ -122,14 +121,14 @@ export default function Contacts({
     }
 
     fetchContacts();
-  }, [user]);
+  }, [user, setContactHandler]);
 
   return (
     <Drawer
       className={classes.contactsDrawer}
       variant="persistent"
       anchor="left"
-      open={drawerOpen}
+      open={true}
       PaperProps={{ style: { width: contactsWidth } }}
     >
       <div className={classes.toolbar} />

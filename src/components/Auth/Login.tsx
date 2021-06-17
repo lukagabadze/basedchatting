@@ -8,7 +8,7 @@ const initialForm = {
 };
 
 export default function Login(): ReactElement {
-  const { user, login } = useAuth();
+  const { login } = useAuth();
   const [form, setForm] = useState(initialForm);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
