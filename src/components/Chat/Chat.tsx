@@ -75,7 +75,7 @@ export default function Chat(): ReactElement {
       });
 
       setLoading(false);
-      setMessages({ ...messages, [contact.id]: messagesList });
+      setMessages({ ...messages, [contact.id]: messagesList.reverse() });
     }
 
     fetchMessages();
