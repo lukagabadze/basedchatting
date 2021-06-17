@@ -4,12 +4,27 @@ import { Server, Socket } from "socket.io";
 const httpServer = createServer();
 const io = new Server(httpServer, {});
 
-import { MessageType, onNewMessage } from "./sockets/chatSockets";
+export type MessageType = {
+  id: string;
+  text: string;
+  sender: string;
+  contactId: string;
+  createdAt: Date;
+  members: string[] | undefined;
+};
+
 io.on("connection", (socket: Socket) => {
   console.log("new user connected");
 
   socket.on("new-message", (message: MessageType) => {
-    onNewMessage(socket, message);
+    if (!message.members) return;
+
+    const { members } = message;
+
+    delete message.members;
+    members.forEach((member) => {
+      io.emit(member, message);
+    });
   });
 });
 
