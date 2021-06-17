@@ -2,28 +2,20 @@ import React, {
   createContext,
   ReactElement,
   useContext,
-  useEffect,
+  useRef,
   useState,
 } from "react";
 import { database } from "../firebase";
 
 type AvatarContextType = {
   userAvatarMap: userAvatarMapType;
-  fetchAndMapUsers(members?: string[]): userAvatarMapType;
+  fetchAndMapUsers(members: string[]): void;
 };
 
-const defaultValue = {
-  userAvatarMap: {},
-  fetchAndMapUsers: () => {
-    return {};
-  },
-};
+const AvatarContext = createContext<AvatarContextType>({} as AvatarContextType);
 
-const AvatarContext = createContext<AvatarContextType>(defaultValue);
-
-export function useAvatar(members?: string[]) {
-  const { fetchAndMapUsers } = useContext(AvatarContext);
-  return fetchAndMapUsers(members);
+export function useAvatar() {
+  return useContext(AvatarContext);
 }
 
 interface Props {
@@ -36,34 +28,23 @@ export type userAvatarMapType = {
 
 export default function AvatarProvider({ children }: Props): ReactElement {
   const [userAvatarMap, setUserAvatarMap] = useState<userAvatarMapType>({});
-  let avatarUrlMap: userAvatarMapType = { ...userAvatarMap };
-  let render = false;
-
-  useEffect(() => {
-    // Save mapped data to state
-    setUserAvatarMap(avatarUrlMap);
-  }, [render]);
+  const avatarUrlMap = useRef<userAvatarMapType>({});
 
   // Fetch and map all the members profile images
-  function fetchAndMapUsers(members?: string[]) {
-    if (!members) {
-      return avatarUrlMap;
-    }
-
+  const fetchAndMapUsers = (members: string[]) => {
     const usersRef = database.collection("users");
     members.map(async (uid) => {
       const snapshot = await usersRef.doc(uid).get();
       const data = snapshot.data();
       if (!data) return;
       if ("imageUrl" in data) {
-        avatarUrlMap[uid] = data.imageUrl;
+        avatarUrlMap.current[uid] = data.imageUrl;
       } else {
-        avatarUrlMap[uid] = "";
+        avatarUrlMap.current[uid] = "";
       }
     });
-
-    return avatarUrlMap;
-  }
+    setUserAvatarMap(avatarUrlMap.current);
+  };
 
   const value = {
     userAvatarMap,

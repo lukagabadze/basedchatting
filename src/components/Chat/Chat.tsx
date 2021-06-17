@@ -16,7 +16,6 @@ export default function Chat(): ReactElement {
   const [messages, setMessages] = useState<MessagesType>({});
   const [loading, setLoading] = useState(false);
 
-  useAvatar(contact?.members);
   const { user } = useAuth();
   const socket = useSocket();
 

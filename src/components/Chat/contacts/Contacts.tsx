@@ -9,12 +9,14 @@ import {
   Fab,
   ListItemIcon,
   Drawer,
+  Avatar,
 } from "@material-ui/core";
 import GroupAddIcon from "@material-ui/icons/GroupAdd";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddContactDialog from "./AddContactDialog";
 import { database } from "../../../firebase";
 import { useAuth } from "../../../contexts/AuthContext";
+import { useAvatar } from "../../../contexts/AvatarContext";
+import { AvatarGroup } from "@material-ui/lab";
 
 interface Props {
   chosenContact: ContactType | null;
@@ -34,6 +36,16 @@ const useStyles = makeStyles((theme) => ({
   listItem: {
     direction: "ltr",
     borderTop: "1px solid black",
+  },
+  listItemText: {
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  userAvatars: {
+    backgroundColor: "gray",
+    width: theme.spacing(6),
+    height: theme.spacing(6),
   },
   contactsHeader: {
     display: "flex",
@@ -57,21 +69,36 @@ export default function Contacts({
   chosenContact,
   setContactHandler,
 }: Props): ReactElement {
-  const { user } = useAuth();
-  const classes = useStyles();
   const [drawerOpen, setDrawerOpen] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [contacts, setContacts] = useState<ContactType[]>([]);
+
+  const { user } = useAuth();
+  const classes = useStyles();
+  const { userAvatarMap, fetchAndMapUsers } = useAvatar();
 
   const handleToggle = () => {
     return setDialogOpen(!dialogOpen);
   };
 
   useEffect(() => {
+    let allMembers: string[] = [];
+    const contactsTmp = [...contacts];
+    contactsTmp.map((contact) => {
+      allMembers = [...allMembers, ...contact.members];
+    });
+    allMembers = allMembers.filter(
+      (member, ind) => allMembers.indexOf(member) === ind
+    );
+
+    fetchAndMapUsers(allMembers);
+  }, [contacts]);
+
+  useEffect(() => {
     async function fetchContacts() {
       if (!user) return;
       const contactsRef = database.collection("contacts");
-      contactsRef
+      const unsubscribe = contactsRef
         .where("members", "array-contains", user.uid)
         .onSnapshot((docSnap) => {
           let contactsList: ContactType[] = [];
@@ -86,7 +113,12 @@ export default function Contacts({
           });
 
           setContacts(contactsList);
+          setContactHandler(contactsList[0]);
         });
+
+      return () => {
+        unsubscribe();
+      };
     }
 
     fetchContacts();
@@ -129,12 +161,38 @@ export default function Contacts({
               )}
             >
               <ListItemIcon>
-                <AccountCircleIcon
-                  fontSize="large"
-                  style={{ margin: "auto" }}
-                />
+                <AvatarGroup
+                  max={3}
+                  spacing="small"
+                  classes={{ avatar: classes.userAvatars }}
+                >
+                  {contact.members.map((member) => {
+                    if (member === user?.uid) return null;
+
+                    return <Avatar key={member} src={userAvatarMap[member]} />;
+                  })}
+                </AvatarGroup>
               </ListItemIcon>
-              <ListItemText primary={contact.name} />
+              <ListItemText
+                primary={
+                  <Typography
+                    variant="body2"
+                    style={{ fontWeight: 600 }}
+                    className={classes.listItemText}
+                  >
+                    {contact.name}
+                  </Typography>
+                }
+                secondary={
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    className={classes.listItemText}
+                  >
+                    Gabo: last message sample text...
+                  </Typography>
+                }
+              />
             </ListItem>
           );
         })}

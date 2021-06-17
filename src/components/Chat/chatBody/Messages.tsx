@@ -10,7 +10,7 @@ interface Props {
 export default function Messages({ messages }: Props): ReactElement {
   const chatDivRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
-  const urlMap = useAvatar();
+  const { userAvatarMap } = useAvatar();
 
   useEffect(() => {
     // Scroll the user to the bottom
@@ -28,7 +28,7 @@ export default function Messages({ messages }: Props): ReactElement {
               key={message.id}
               isOwn={message.sender === user?.uid}
               message={message}
-              userImageUrl={urlMap[message.sender]}
+              userImageUrl={userAvatarMap[message.sender]}
             />
           );
         })}
