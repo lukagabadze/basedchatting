@@ -10,7 +10,7 @@ export type MessagesType = {
 
 export default function Chat(): ReactElement {
   const [contact, setContact] = useState<ContactType | null>(null);
-  const { messages, loading } = useFetchMessage(contact);
+  const { messages, loading, fetchOldMessages } = useFetchMessage(contact);
 
   const setContactHandler = useCallback((newContact: ContactType) => {
     setContact(newContact);
@@ -20,7 +20,12 @@ export default function Chat(): ReactElement {
     <div style={{ height: "100%" }}>
       <Contacts chosenContact={contact} setContactHandler={setContactHandler} />
       {contact && (
-        <ChatBody loading={loading} contactProp={contact} messages={messages} />
+        <ChatBody
+          loading={loading}
+          contactProp={contact}
+          messages={messages}
+          fetchOldMessages={fetchOldMessages}
+        />
       )}
     </div>
   );

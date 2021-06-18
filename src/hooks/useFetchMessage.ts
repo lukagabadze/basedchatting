@@ -44,8 +44,8 @@ export default function useFetchMessage(contact: ContactType | null) {
 
       setLoading(true);
 
-      const firestoreMessagesRef = database.collection("messages");
-      const snapshot = await firestoreMessagesRef
+      const messagesRef = database.collection("messages");
+      const snapshot = await messagesRef
         .where("contactId", "==", contact.id)
         .orderBy("createdAt", "desc")
         .limit(25)
@@ -72,5 +72,38 @@ export default function useFetchMessage(contact: ContactType | null) {
     fetchMessages();
   }, [messages, user, contact]);
 
-  return { messages, loading };
+  async function fetchOldMessages(lastMessage: MessageType) {
+    const { contactId } = lastMessage;
+
+    const messagesRef = database.collection("messages");
+    const snapshot = await messagesRef
+      .where("contactId", "==", contactId)
+      .orderBy("createdAt", "desc")
+      .startAfter(lastMessage.createdAt)
+      .limit(20)
+      .get();
+
+    let messagesList: MessageType[] = [];
+    snapshot.forEach((doc) => {
+      const { text, sender, contactId, createdAt } = doc.data();
+      messagesList.push({
+        id: doc.id,
+        text,
+        sender,
+        contactId,
+        createdAt,
+      });
+    });
+
+    if (!messagesList.length) return;
+
+    const reversedMessages = messagesList.reverse();
+
+    return setMessages({
+      ...messages,
+      [contactId]: [...reversedMessages, ...messages[contactId]],
+    });
+  }
+
+  return { messages, loading, fetchOldMessages };
 }

@@ -5,11 +5,13 @@ import { contactsWidth } from "../contacts/Contacts";
 import Messages from "./Messages";
 import { MessagesType } from "../Chat";
 import ChatInput from "./ChatInput";
+import { MessageType } from "./Message";
 
 interface Props {
   contactProp: ContactType;
   messages: MessagesType;
   loading: boolean;
+  fetchOldMessages(lastMessage: MessageType): void;
 }
 
 const useStyles = makeStyles({
@@ -39,6 +41,7 @@ export default function ChatBody({
   contactProp,
   messages,
   loading,
+  fetchOldMessages,
 }: Props): ReactElement {
   const [contact, setContact] = useState<ContactType | null>(contactProp);
 
@@ -58,7 +61,12 @@ export default function ChatBody({
       {/* The Messages */}
       <div className={classes.chatMessagesDiv}>
         {!loading ? (
-          contact && <Messages messages={messages[contact.id]} />
+          contact && (
+            <Messages
+              messages={messages[contact.id]}
+              fetchOldMessages={fetchOldMessages}
+            />
+          )
         ) : (
           <Typography variant="h4">Loading...</Typography>
         )}
