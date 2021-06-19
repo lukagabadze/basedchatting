@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from "react";
+import { RefObject, ReactElement, useEffect, useState } from "react";
 import { Box, makeStyles, Typography } from "@material-ui/core";
 import { ContactType } from "../contacts/Contacts";
 import { contactsWidth } from "../contacts/Contacts";
@@ -6,13 +6,6 @@ import Messages from "./Messages";
 import { MessagesType } from "../Chat";
 import ChatInput from "./ChatInput";
 import { MessageType } from "./Message";
-
-interface Props {
-  contactProp: ContactType;
-  messages: MessagesType;
-  loading: boolean;
-  fetchOldMessages(lastMessage: MessageType): void;
-}
 
 const useStyles = makeStyles({
   gridContainer: {
@@ -37,11 +30,20 @@ const useStyles = makeStyles({
   },
 });
 
+interface Props {
+  contactProp: ContactType;
+  messages: MessagesType;
+  loading: boolean;
+  fetchOldMessages(lastMessage: MessageType): void;
+  chatDivRef: RefObject<HTMLDivElement>;
+}
+
 export default function ChatBody({
   contactProp,
   messages,
   loading,
   fetchOldMessages,
+  chatDivRef,
 }: Props): ReactElement {
   const [contact, setContact] = useState<ContactType | null>(contactProp);
 
@@ -65,6 +67,7 @@ export default function ChatBody({
             <Messages
               messages={messages[contact.id]}
               fetchOldMessages={fetchOldMessages}
+              chatDivRef={chatDivRef}
             />
           )
         ) : (

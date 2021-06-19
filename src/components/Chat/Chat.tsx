@@ -1,4 +1,4 @@
-import { ReactElement, useState, useCallback } from "react";
+import { ReactElement, useState, useCallback, useRef } from "react";
 import Contacts, { ContactType } from "./contacts/Contacts";
 import ChatBody from "./chatBody/ChatBody";
 import { MessageType } from "./chatBody/Message";
@@ -10,7 +10,12 @@ export type MessagesType = {
 
 export default function Chat(): ReactElement {
   const [contact, setContact] = useState<ContactType | null>(null);
-  const { messages, loading, fetchOldMessages } = useFetchMessage(contact);
+  const chatDivRef = useRef<HTMLDivElement>(null);
+
+  const { messages, loading, fetchOldMessages } = useFetchMessage({
+    contact,
+    chatDivRef,
+  });
 
   const setContactHandler = useCallback((newContact: ContactType) => {
     setContact(newContact);
@@ -25,6 +30,7 @@ export default function Chat(): ReactElement {
           contactProp={contact}
           messages={messages}
           fetchOldMessages={fetchOldMessages}
+          chatDivRef={chatDivRef}
         />
       )}
     </div>

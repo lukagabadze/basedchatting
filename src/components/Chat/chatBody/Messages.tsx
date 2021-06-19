@@ -1,19 +1,30 @@
-import { ReactElement, useRef, useEffect, useCallback } from "react";
+import { RefObject, ReactElement, useRef, useEffect, useCallback } from "react";
+import { makeStyles } from "@material-ui/core";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useAvatar } from "../../../contexts/AvatarContext";
 import Message, { MessageType } from "./Message";
 
+const useStyles = makeStyles({
+  chatDiv: {
+    overflowY: "auto",
+    height: "100%",
+    display: "flex",
+    flexDirection: "column-reverse",
+  },
+});
+
 interface Props {
   messages: MessageType[];
   fetchOldMessages(lastMessage: MessageType): void;
+  chatDivRef: RefObject<HTMLDivElement>;
 }
 
 export default function Messages({
   messages,
   fetchOldMessages,
+  chatDivRef,
 }: Props): ReactElement {
-  const chatDivRef = useRef<HTMLDivElement>(null);
-
+  const classes = useStyles();
   const { user } = useAuth();
   const { userAvatarMap } = useAvatar();
 
@@ -22,7 +33,7 @@ export default function Messages({
     if (chatDivRef.current) {
       chatDivRef.current.scrollTop = chatDivRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [chatDivRef]);
 
   const observer = useRef<IntersectionObserver>();
   const lastMessageRef = useCallback(
@@ -31,7 +42,7 @@ export default function Messages({
 
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && messages) {
-          fetchOldMessages(messages[0]);
+          fetchOldMessages(messages[messages.length - 1]);
 
           // es araironiulad production build-shi unda iyos
           console.log("ait... daginaxee");
@@ -44,11 +55,14 @@ export default function Messages({
   );
 
   return (
-    <div ref={chatDivRef} style={{ overflowY: "auto", height: "100%" }}>
+    <div ref={chatDivRef} className={classes.chatDiv}>
       {messages &&
         messages.map((message, ind) => {
           return (
-            <div ref={ind === 0 ? lastMessageRef : null} key={message.id}>
+            <div
+              ref={ind === messages.length - 1 ? lastMessageRef : null}
+              key={message.id}
+            >
               <Message
                 isOwn={message.sender === user?.uid}
                 message={message}

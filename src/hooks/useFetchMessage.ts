@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { RefObject, useState, useEffect, useRef } from "react";
 import { MessageType } from "../components/Chat/chatBody/Message";
 import { MessagesType } from "../components/Chat/Chat";
 import { ContactType } from "../components/Chat/contacts/Contacts";
@@ -6,9 +6,15 @@ import { useAuth } from "../contexts/AuthContext";
 import { useSocket } from "../contexts/SocketContext";
 import { database } from "../firebase";
 
-export default function useFetchMessage(contact: ContactType | null) {
+interface Props {
+  contact: ContactType | null;
+  chatDivRef: RefObject<HTMLDivElement>;
+}
+
+export default function useFetchMessage({ contact, chatDivRef }: Props) {
   const [messages, setMessages] = useState<MessagesType>({});
   const [loading, setLoading] = useState<boolean>(false);
+  const messageScrollRef = useRef<HTMLDivElement | null>(null);
 
   const { user } = useAuth();
   const socket = useSocket();
@@ -20,21 +26,24 @@ export default function useFetchMessage(contact: ContactType | null) {
     socket.on(user.uid, (message: MessageType) => {
       const { contactId } = message;
 
-      if (!message.contactId) return;
       if (!messages[contactId]) return;
+      if (messages[contactId].includes(message)) return;
 
-      if (!messages[contactId].includes(message)) {
-        setMessages({
-          ...messages,
-          [contactId]: [...messages[contactId], message],
-        });
+      setMessages({
+        ...messages,
+        [contactId]: [message, ...messages[contactId]],
+      });
+
+      // Scroll the user to the bottom
+      if (chatDivRef.current) {
+        chatDivRef.current.scrollTop = chatDivRef.current.scrollHeight;
       }
     });
 
     return () => {
       socket.off(user.uid);
     };
-  }, [socket, user, messages]);
+  }, [socket, user, messages, chatDivRef]);
 
   useEffect(() => {
     async function fetchMessages() {
@@ -63,10 +72,8 @@ export default function useFetchMessage(contact: ContactType | null) {
         });
       });
 
-      const reversedMessages = messagesList.reverse();
-
       setLoading(false);
-      setMessages({ ...messages, [contact.id]: reversedMessages });
+      setMessages({ ...messages, [contact.id]: messagesList });
     }
 
     fetchMessages();
@@ -97,13 +104,11 @@ export default function useFetchMessage(contact: ContactType | null) {
 
     if (!messagesList.length) return;
 
-    const reversedMessages = messagesList.reverse();
-
-    return setMessages({
+    setMessages({
       ...messages,
-      [contactId]: [...reversedMessages, ...messages[contactId]],
+      [contactId]: [...messages[contactId], ...messagesList],
     });
   }
 
-  return { messages, loading, fetchOldMessages };
+  return { messages, loading, messageScrollRef, fetchOldMessages };
 }
