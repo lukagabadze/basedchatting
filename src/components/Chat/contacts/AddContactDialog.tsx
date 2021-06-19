@@ -14,6 +14,7 @@ import {
 } from "@material-ui/core";
 import { database } from "../../../firebase";
 import { useAuth, UserType } from "../../../contexts/AuthContext";
+import { useSocket } from "../../../contexts/SocketContext";
 
 interface Props {
   open: boolean;
@@ -34,11 +35,13 @@ export default function AddContactDialogue({
   open,
   handleToggle,
 }: Props): ReactElement {
-  const { user } = useAuth();
-  const classes = useStyles();
   const [users, setUsers] = useState<UserType[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<UserType[]>([]);
   const [contactName, setContactName] = useState<string>("");
+
+  const classes = useStyles();
+  const { user } = useAuth();
+  const socket = useSocket();
 
   useEffect(() => {
     async function fetchUsers() {
@@ -79,6 +82,7 @@ export default function AddContactDialogue({
     if (!user) return;
     if (!contactName) return;
     if (selectedUsers.length === 0) return;
+    if (!socket) return;
 
     const userUids: string[] = selectedUsers.map(({ uid }) => {
       return uid;
@@ -91,8 +95,7 @@ export default function AddContactDialogue({
       createdAt: Date.now(),
     };
 
-    const contactRef = database.collection("contacts");
-    contactRef.add(newContact);
+    socket.emit("new-contact", newContact);
 
     handleToggle();
     setSelectedUsers([]);

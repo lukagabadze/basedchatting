@@ -20,32 +20,6 @@ export default function useFetchMessage({ contact, chatDivRef }: Props) {
   const socket = useSocket();
 
   useEffect(() => {
-    if (!user) return;
-    if (!socket) return;
-
-    socket.on(user.uid, (message: MessageType) => {
-      const { contactId } = message;
-
-      if (!messages[contactId]) return;
-      if (messages[contactId].includes(message)) return;
-
-      setMessages({
-        ...messages,
-        [contactId]: [message, ...messages[contactId]],
-      });
-
-      // Scroll the user to the bottom
-      if (chatDivRef.current) {
-        chatDivRef.current.scrollTop = chatDivRef.current.scrollHeight;
-      }
-    });
-
-    return () => {
-      socket.off(user.uid);
-    };
-  }, [socket, user, messages, chatDivRef]);
-
-  useEffect(() => {
     async function fetchMessages() {
       if (!user) return;
       if (!contact) return;
@@ -78,6 +52,32 @@ export default function useFetchMessage({ contact, chatDivRef }: Props) {
 
     fetchMessages();
   }, [messages, user, contact]);
+
+  useEffect(() => {
+    if (!user) return;
+    if (!socket) return;
+
+    socket.on(`new-message-${user.uid}`, (message: MessageType) => {
+      const { contactId } = message;
+
+      if (!messages[contactId]) return;
+      if (messages[contactId].includes(message)) return;
+
+      setMessages({
+        ...messages,
+        [contactId]: [message, ...messages[contactId]],
+      });
+
+      // Scroll the user to the bottom
+      if (chatDivRef.current) {
+        chatDivRef.current.scrollTop = chatDivRef.current.scrollHeight;
+      }
+    });
+
+    return () => {
+      socket.off(`new-message-${user.uid}`);
+    };
+  }, [socket, user, messages, chatDivRef]);
 
   async function fetchOldMessages(lastMessage: MessageType) {
     const { contactId } = lastMessage;

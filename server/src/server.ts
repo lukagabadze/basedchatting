@@ -14,9 +14,17 @@ export type MessageType = {
   members: string[] | undefined;
 };
 
+export type ContactType = {
+  id: string;
+  name: string;
+  members: string[];
+  createdAt: Date;
+};
+
 io.on("connection", (socket: Socket) => {
   console.log("new user connected");
 
+  // Recieve, save and send back the message
   socket.on("new-message", async (message: MessageType) => {
     if (!message.members) return;
 
@@ -28,7 +36,20 @@ io.on("connection", (socket: Socket) => {
 
     message.id = newMessage.id;
     members.forEach(async (member) => {
-      io.emit(member, message);
+      io.emit(`new-message-${member}`, message);
+    });
+  });
+
+  // Recieve, save and send back the contact
+  socket.on("new-contact", async (contact: ContactType) => {
+    if (!contact.members) return;
+
+    const contactsRef = database.collection("contacts");
+    const newContact = await contactsRef.add(contact);
+
+    contact.id = newContact.id;
+    contact.members.forEach((member) => {
+      io.emit(`new-contact-${member}`, contact);
     });
   });
 });

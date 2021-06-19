@@ -13,15 +13,10 @@ import {
 } from "@material-ui/core";
 import GroupAddIcon from "@material-ui/icons/GroupAdd";
 import AddContactDialog from "./AddContactDialog";
-import { database } from "../../../firebase";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useAvatar } from "../../../contexts/AvatarContext";
 import { AvatarGroup } from "@material-ui/lab";
-
-interface Props {
-  chosenContact: ContactType | null;
-  setContactHandler: (contact: ContactType) => void;
-}
+import useFetchContacts from "../../../hooks/useFetchContacts";
 
 export const contactsWidth = 300;
 
@@ -65,12 +60,17 @@ export type ContactType = {
   createdAt: Date;
 };
 
+interface Props {
+  chosenContact: ContactType | null;
+  setContactHandler: (contact: ContactType) => void;
+}
+
 export default function Contacts({
   chosenContact,
   setContactHandler,
 }: Props): ReactElement {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [contacts, setContacts] = useState<ContactType[]>([]);
+  const { contacts } = useFetchContacts({ setContactHandler });
 
   const { user } = useAuth();
   const classes = useStyles();
@@ -92,36 +92,6 @@ export default function Contacts({
 
     fetchAndMapUsers(allMembers);
   }, [contacts, fetchAndMapUsers]);
-
-  useEffect(() => {
-    async function fetchContacts() {
-      if (!user) return;
-      const contactsRef = database.collection("contacts");
-      const unsubscribe = contactsRef
-        .where("members", "array-contains", user.uid)
-        .onSnapshot((docSnap) => {
-          let contactsList: ContactType[] = [];
-          docSnap.forEach((doc) => {
-            const { name, members, createdAt } = doc.data();
-            contactsList.push({
-              id: doc.id,
-              name,
-              members,
-              createdAt,
-            });
-          });
-
-          setContacts(contactsList);
-          setContactHandler(contactsList[0]);
-        });
-
-      return () => {
-        unsubscribe();
-      };
-    }
-
-    fetchContacts();
-  }, [user, setContactHandler]);
 
   return (
     <Drawer
