@@ -65,13 +65,18 @@ export default function useFetchMessage({
     socket.on(`new-message-${user.uid}`, (message: MessageType) => {
       const { contactId } = message;
 
-      if (!messages[contactId]) return;
-      if (messages[contactId].includes(message)) return;
+      if (contactId in messages && messages[contactId].includes(message))
+        return;
 
-      setMessages({
-        ...messages,
-        [contactId]: [message, ...messages[contactId]],
-      });
+      const messagesTmp = { ...messages };
+
+      if (contactId in messages) {
+        messagesTmp[contactId] = [message, ...messagesTmp[contactId]];
+      } else {
+        messagesTmp[contactId] = [message];
+      }
+
+      setMessages(messagesTmp);
 
       // move the contact to the top
       handleContactChangeOnMessage(contactId);
