@@ -79,7 +79,7 @@ export default function Contact({
             color="textSecondary"
             className={classes.listItemText}
           >
-            Gabo: last message sample text...
+            {`${contact.lastMessage?.sender}: ${contact.lastMessage?.text}`}
           </Typography>
         }
       />

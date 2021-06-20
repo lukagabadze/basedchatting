@@ -8,7 +8,11 @@ export type ContactType = {
   name: string;
   members: string[];
   createdAt: Date;
-  lastMessageDate: Date | undefined;
+  lastMessageDate?: Date | undefined;
+  lastMessage?: {
+    sender: string;
+    text: string;
+  };
 };
 
 export default function useFetchContacts() {
@@ -29,7 +33,8 @@ export default function useFetchContacts() {
 
       let contactsList: ContactType[] = [];
       snapshot.forEach(async (doc) => {
-        const { name, members, createdAt, lastMessageDate } = doc.data();
+        const { name, members, createdAt, lastMessageDate, lastMessage } =
+          doc.data();
 
         contactsList.push({
           id: doc.id,
@@ -37,6 +42,7 @@ export default function useFetchContacts() {
           members,
           createdAt,
           lastMessageDate: lastMessageDate,
+          lastMessage,
         });
       });
       setContacts(contactsList);
@@ -60,22 +66,27 @@ export default function useFetchContacts() {
   }, [socket, user, contacts, setContacts]);
 
   const handleContactChangeOnMessage = useCallback(
-    (contactId: string) => {
-      const contactsTmp = [...contacts];
+    async (contactId: string) => {
+      let contactsTmp = [...contacts];
 
-      let contactToShift: ContactType | null = null;
-      contactsTmp.map((contact) => {
-        if (contact.id === contactId) {
-          contactToShift = contact;
-        }
-        return contact;
-      });
+      const doc = await database.doc(`contacts/${contactId}`).get();
+      const contactToShift = doc.data();
 
       if (!contactToShift) return;
 
-      contactsTmp.splice(contacts.indexOf(contactToShift), 1);
-      contactsTmp.unshift(contactToShift);
+      contactToShift.id = doc.id;
 
+      let index: number | null = null;
+      contactsTmp.filter((contact, ind) => {
+        if (contact.id === contactToShift.id) {
+          index = ind;
+        }
+        return true;
+      });
+      if (!index) return;
+
+      contactsTmp.splice(index, 1);
+      contactsTmp.unshift(contactToShift as ContactType);
       setContacts(contactsTmp);
     },
     [contacts, setContacts]

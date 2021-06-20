@@ -28,6 +28,11 @@ io.on("connection", (socket: Socket) => {
   socket.on("new-message", async (message: MessageType) => {
     if (!message.members) return;
 
+    // fetch senders name
+    const snapshot = await database.doc(`users/${message.sender}`).get();
+    const user = snapshot.data();
+    if (!user) return;
+
     const { members } = message;
     delete message.members;
 
@@ -38,7 +43,7 @@ io.on("connection", (socket: Socket) => {
     await database.doc(`contacts/${message.contactId}`).update({
       lastMessageDate: message.createdAt,
       lastMessage: {
-        sender: message.sender,
+        sender: user.displayName,
         text: message.text,
       },
     });
