@@ -16,7 +16,6 @@ import AddContactDialog from "./AddContactDialog";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useAvatar } from "../../../contexts/AvatarContext";
 import { AvatarGroup } from "@material-ui/lab";
-import useFetchContacts from "../../../hooks/useFetchContacts";
 
 export const contactsWidth = 300;
 
@@ -58,19 +57,21 @@ export type ContactType = {
   name: string;
   members: string[];
   createdAt: Date;
+  lastMessageDate: Date | undefined;
 };
 
 interface Props {
+  contacts: ContactType[];
   chosenContact: ContactType | null;
   setContactHandler: (contact: ContactType) => void;
 }
 
 export default function Contacts({
+  contacts,
   chosenContact,
   setContactHandler,
 }: Props): ReactElement {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { contacts } = useFetchContacts({ setContactHandler });
 
   const { user } = useAuth();
   const classes = useStyles();

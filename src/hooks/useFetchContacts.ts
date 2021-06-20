@@ -1,15 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ContactType } from "../components/Chat/contacts/Contacts";
 import { useAuth } from "../contexts/AuthContext";
 import { useSocket } from "../contexts/SocketContext";
 import { database } from "../firebase";
 
-interface Props {
-  setContactHandler: (contact: ContactType) => void;
-}
-
-export default function useFetchContacts({ setContactHandler }: Props) {
+export default function useFetchContacts() {
   const [contacts, setContacts] = useState<ContactType[]>([]);
+  const [contact, setContact] = useState<ContactType | null>(null);
 
   const { user } = useAuth();
   const socket = useSocket();
@@ -20,24 +17,27 @@ export default function useFetchContacts({ setContactHandler }: Props) {
       const contactsRef = database.collection("contacts");
       const snapshot = await contactsRef
         .where("members", "array-contains", user.uid)
+        .orderBy("lastMessageDate", "desc")
         .get();
 
       let contactsList: ContactType[] = [];
-      snapshot.forEach((doc) => {
-        const { name, members, createdAt } = doc.data();
+      snapshot.forEach(async (doc) => {
+        const { name, members, createdAt, lastMessageDate } = doc.data();
+
         contactsList.push({
           id: doc.id,
           name,
           members,
           createdAt,
+          lastMessageDate: lastMessageDate,
         });
-        setContacts(contactsList);
-        setContactHandler(contactsList[0]);
       });
+      setContacts(contactsList);
+      setContact(contactsList[0]);
     }
 
     fetchContacts();
-  }, [user, setContactHandler]);
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -52,5 +52,27 @@ export default function useFetchContacts({ setContactHandler }: Props) {
     };
   }, [socket, user, contacts, setContacts]);
 
-  return { contacts };
+  const handleContactChangeOnMessage = useCallback(
+    (contactId: string) => {
+      const contactsTmp = [...contacts];
+
+      let contactToShift: ContactType | null = null;
+      contactsTmp.map((contact) => {
+        if (contact.id === contactId) {
+          contactToShift = contact;
+        }
+        return contact;
+      });
+
+      if (!contactToShift) return;
+
+      contactsTmp.splice(contacts.indexOf(contactToShift), 1);
+      contactsTmp.unshift(contactToShift);
+
+      setContacts(contactsTmp);
+    },
+    [contacts, setContacts]
+  );
+
+  return { contacts, contact, setContact, handleContactChangeOnMessage };
 }

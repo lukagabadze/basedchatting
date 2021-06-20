@@ -34,6 +34,11 @@ io.on("connection", (socket: Socket) => {
     const messagesRef = database.collection("messages");
     const newMessage = await messagesRef.add(message);
 
+    // update contact with the latest message date
+    await database.doc(`contacts/${message.contactId}`).update({
+      lastMessageDate: message.createdAt,
+    });
+
     message.id = newMessage.id;
     members.forEach(async (member) => {
       io.emit(`new-message-${member}`, message);

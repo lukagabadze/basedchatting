@@ -9,9 +9,14 @@ import { database } from "../firebase";
 interface Props {
   contact: ContactType | null;
   chatDivRef: RefObject<HTMLDivElement>;
+  handleContactChangeOnMessage: (contactId: string) => void;
 }
 
-export default function useFetchMessage({ contact, chatDivRef }: Props) {
+export default function useFetchMessage({
+  contact,
+  chatDivRef,
+  handleContactChangeOnMessage,
+}: Props) {
   const [messages, setMessages] = useState<MessagesType>({});
   const [loading, setLoading] = useState<boolean>(false);
   const messageScrollRef = useRef<HTMLDivElement | null>(null);
@@ -68,6 +73,9 @@ export default function useFetchMessage({ contact, chatDivRef }: Props) {
         [contactId]: [message, ...messages[contactId]],
       });
 
+      // move the contact to the top
+      handleContactChangeOnMessage(contactId);
+
       // Scroll the user to the bottom
       if (chatDivRef.current) {
         chatDivRef.current.scrollTop = chatDivRef.current.scrollHeight;
@@ -77,7 +85,7 @@ export default function useFetchMessage({ contact, chatDivRef }: Props) {
     return () => {
       socket.off(`new-message-${user.uid}`);
     };
-  }, [socket, user, messages, chatDivRef]);
+  }, [socket, user, messages, chatDivRef, handleContactChangeOnMessage]);
 
   async function fetchOldMessages(lastMessage: MessageType) {
     const { contactId } = lastMessage;
