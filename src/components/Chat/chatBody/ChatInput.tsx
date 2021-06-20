@@ -1,8 +1,8 @@
 import React, { ReactElement, useRef } from "react";
 import { makeStyles, TextField } from "@material-ui/core";
-import { ContactType } from "../contacts/Contacts";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useSocket } from "../../../contexts/SocketContext";
+import { ContactType } from "../../../hooks/useFetchContacts";
 
 const useStyles = makeStyles({
   chatInput: { backgroundColor: "white" },

@@ -1,14 +1,7 @@
 import { ReactElement } from "react";
 import { Typography, makeStyles, Paper, Box, Avatar } from "@material-ui/core";
+import { MessageType } from "../../../hooks/useFetchMessage";
 import clsx from "clsx";
-
-export type MessageType = {
-  id: string;
-  text: string;
-  sender: string;
-  contactId: string;
-  createdAt: Date;
-};
 
 const useStyles = makeStyles((theme) => ({
   messageDiv: {

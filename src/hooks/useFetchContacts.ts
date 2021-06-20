@@ -1,8 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
-import { ContactType } from "../components/Chat/contacts/Contacts";
 import { useAuth } from "../contexts/AuthContext";
 import { useSocket } from "../contexts/SocketContext";
 import { database } from "../firebase";
+
+export type ContactType = {
+  id: string;
+  name: string;
+  members: string[];
+  createdAt: Date;
+  lastMessageDate: Date | undefined;
+};
 
 export default function useFetchContacts() {
   const [contacts, setContacts] = useState<ContactType[]>([]);

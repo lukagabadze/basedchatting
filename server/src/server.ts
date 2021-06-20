@@ -37,6 +37,10 @@ io.on("connection", (socket: Socket) => {
     // update contact with the latest message date
     await database.doc(`contacts/${message.contactId}`).update({
       lastMessageDate: message.createdAt,
+      lastMessage: {
+        sender: message.sender,
+        text: message.text,
+      },
     });
 
     message.id = newMessage.id;

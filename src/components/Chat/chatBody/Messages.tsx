@@ -2,7 +2,8 @@ import { RefObject, ReactElement, useRef, useEffect, useCallback } from "react";
 import { makeStyles } from "@material-ui/core";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useAvatar } from "../../../contexts/AvatarContext";
-import Message, { MessageType } from "./Message";
+import Message from "./Message";
+import { MessageType } from "../../../hooks/useFetchMessage";
 
 const useStyles = makeStyles({
   chatDiv: {

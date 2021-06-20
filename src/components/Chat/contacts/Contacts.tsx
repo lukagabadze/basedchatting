@@ -16,6 +16,7 @@ import AddContactDialog from "./AddContactDialog";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useAvatar } from "../../../contexts/AvatarContext";
 import { AvatarGroup } from "@material-ui/lab";
+import { ContactType } from "../../../hooks/useFetchContacts";
 
 export const contactsWidth = 300;
 
@@ -51,14 +52,6 @@ const useStyles = makeStyles((theme) => ({
   addContactButton: {},
   toolbar: theme.mixins.toolbar,
 }));
-
-export type ContactType = {
-  id: string;
-  name: string;
-  members: string[];
-  createdAt: Date;
-  lastMessageDate: Date | undefined;
-};
 
 interface Props {
   contacts: ContactType[];

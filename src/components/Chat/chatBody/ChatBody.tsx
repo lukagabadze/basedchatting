@@ -1,11 +1,10 @@
 import { RefObject, ReactElement, useEffect, useState } from "react";
 import { Box, makeStyles, Typography } from "@material-ui/core";
-import { ContactType } from "../contacts/Contacts";
 import { contactsWidth } from "../contacts/Contacts";
 import Messages from "./Messages";
-import { MessagesType } from "../Chat";
 import ChatInput from "./ChatInput";
-import { MessageType } from "./Message";
+import { ContactType } from "../../../hooks/useFetchContacts";
+import { MessagesType, MessageType } from "../../../hooks/useFetchMessage";
 
 const useStyles = makeStyles({
   gridContainer: {

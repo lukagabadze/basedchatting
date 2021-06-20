@@ -1,13 +1,8 @@
 import { ReactElement, useRef } from "react";
 import Contacts from "./contacts/Contacts";
 import ChatBody from "./chatBody/ChatBody";
-import { MessageType } from "./chatBody/Message";
 import useFetchMessage from "../../hooks/useFetchMessage";
 import useFetchContacts from "../../hooks/useFetchContacts";
-
-export type MessagesType = {
-  [key: string]: MessageType[];
-};
 
 export default function Chat(): ReactElement {
   const chatDivRef = useRef<HTMLDivElement>(null);

@@ -1,10 +1,20 @@
 import { RefObject, useState, useEffect, useRef } from "react";
-import { MessageType } from "../components/Chat/chatBody/Message";
-import { MessagesType } from "../components/Chat/Chat";
-import { ContactType } from "../components/Chat/contacts/Contacts";
 import { useAuth } from "../contexts/AuthContext";
 import { useSocket } from "../contexts/SocketContext";
 import { database } from "../firebase";
+import { ContactType } from "./useFetchContacts";
+
+export type MessageType = {
+  id: string;
+  text: string;
+  sender: string;
+  contactId: string;
+  createdAt: Date;
+};
+
+export type MessagesType = {
+  [key: string]: MessageType[];
+};
 
 interface Props {
   contact: ContactType | null;
