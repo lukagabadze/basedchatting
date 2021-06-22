@@ -61,7 +61,6 @@ export default function Signup(): ReactElement {
           fullWidth
           margin="normal"
           label="Password"
-          autoFocus
           required
           autoComplete="none"
           value={form.password}
@@ -75,7 +74,6 @@ export default function Signup(): ReactElement {
           fullWidth
           margin="normal"
           label="Repeat the password"
-          autoFocus
           required
           autoComplete="none"
           value={form.passwordRepeat}

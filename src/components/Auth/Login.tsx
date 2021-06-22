@@ -54,7 +54,6 @@ export default function Login(): ReactElement {
           fullWidth
           margin="normal"
           label="Password"
-          autoFocus
           required
           autoComplete="none"
           value={form.password}
