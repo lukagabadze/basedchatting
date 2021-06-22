@@ -19,6 +19,7 @@ export type ContactType = {
   name: string;
   members: string[];
   createdAt: Date;
+  seenBy: string[];
 };
 
 io.on("connection", (socket: Socket) => {
@@ -46,6 +47,7 @@ io.on("connection", (socket: Socket) => {
         sender: user.displayName,
         text: message.text,
       },
+      seenBy: [message.sender],
     });
 
     message.id = newMessage.id;

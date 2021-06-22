@@ -93,6 +93,12 @@ export default function AddContactDialogue({
       name: contactName,
       members: userUids,
       createdAt: Date.now(),
+      lastMessageDate: Date.now(),
+      lastMessage: {
+        sender: "Bot",
+        text: "Contact created",
+      },
+      seenBy: [],
     };
 
     socket.emit("new-contact", newContact);

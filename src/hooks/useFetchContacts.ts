@@ -13,6 +13,7 @@ export type ContactType = {
     sender: string;
     text: string;
   };
+  seenBy: string[];
 };
 
 export default function useFetchContacts() {
@@ -33,8 +34,14 @@ export default function useFetchContacts() {
 
       let contactsList: ContactType[] = [];
       snapshot.forEach(async (doc) => {
-        const { name, members, createdAt, lastMessageDate, lastMessage } =
-          doc.data();
+        const {
+          name,
+          members,
+          createdAt,
+          lastMessageDate,
+          lastMessage,
+          seenBy,
+        } = doc.data();
 
         contactsList.push({
           id: doc.id,
@@ -43,6 +50,7 @@ export default function useFetchContacts() {
           createdAt,
           lastMessageDate: lastMessageDate,
           lastMessage,
+          seenBy: seenBy || [],
         });
       });
       setContacts(contactsList);
@@ -57,13 +65,39 @@ export default function useFetchContacts() {
     if (!socket) return;
 
     socket.on(`new-contact-${user.uid}`, (contact: ContactType) => {
-      setContacts([...contacts, contact]);
+      setContacts([contact, ...contacts]);
     });
 
     return () => {
       socket.off(`new-message-${user.uid}`);
     };
   }, [socket, user, contacts, setContacts]);
+
+  useEffect(() => {
+    if (!contact) return;
+    if (!user) return;
+    if (contact.seenBy.includes(user.uid)) return;
+
+    const contactRef = database.doc(`contacts/${contact.id}`);
+
+    const newSeenBy = [...contact.seenBy, user.uid];
+
+    contactRef.update({
+      seenBy: newSeenBy,
+    });
+
+    const newContacts = contacts.map((singleContact) => {
+      if (singleContact.id === contact.id) {
+        return {
+          ...singleContact,
+          seenBy: newSeenBy,
+        };
+      }
+      return singleContact;
+    });
+
+    setContacts(newContacts);
+  }, [contact, user]);
 
   const handleContactChangeOnMessage = useCallback(
     async (contactId: string) => {
@@ -83,13 +117,20 @@ export default function useFetchContacts() {
         }
         return true;
       });
-      if (!index) return;
+      if (index === null) return;
 
       contactsTmp.splice(index, 1);
       contactsTmp.unshift(contactToShift as ContactType);
       setContacts(contactsTmp);
+
+      if (contact && contactToShift.id === contact.id) {
+        console.log(contactToShift);
+        console.log(contact);
+        console.log("zd");
+        setContact(contactToShift as ContactType);
+      }
     },
-    [contacts, setContacts]
+    [contacts, contact, setContacts]
   );
 
   return { contacts, contact, setContact, handleContactChangeOnMessage };

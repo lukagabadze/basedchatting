@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import { ReactElement } from "react";
 import {
   ListItem,
   ListItemIcon,
@@ -8,15 +8,27 @@ import {
   Avatar,
 } from "@material-ui/core";
 import { AvatarGroup } from "@material-ui/lab";
+import RadioButtonCheckedIcon from "@material-ui/icons/RadioButtonChecked";
+import clsx from "clsx";
 import { ContactType } from "../../../hooks/useFetchContacts";
 import { useAvatar } from "../../../contexts/AvatarContext";
 import { useAuth } from "../../../contexts/AuthContext";
 
 const useStyles = makeStyles((theme) => ({
+  contactTitle: {
+    fontWeight: 500,
+  },
   listItemText: {
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
+  },
+  contactNewMessage: {
+    fontWeight: "bold",
+    color: "black",
+  },
+  newMessageIcon: {
+    paddingRight: theme.spacing(1),
   },
   userAvatars: {
     backgroundColor: "gray",
@@ -39,6 +51,12 @@ export default function Contact({
   const classes = useStyles();
   const { userAvatarMap } = useAvatar();
   const { user } = useAuth();
+
+  const messageSeen =
+    (user && contact && contact.seenBy.includes(user.uid)) ||
+    (chosenContact && contact.id === chosenContact.id)
+      ? true
+      : false;
 
   return (
     <ListItem
@@ -67,8 +85,11 @@ export default function Contact({
         primary={
           <Typography
             variant="body2"
-            style={{ fontWeight: 600 }}
-            className={classes.listItemText}
+            className={clsx(
+              classes.listItemText,
+              classes.contactTitle,
+              !messageSeen && classes.contactNewMessage
+            )}
           >
             {contact.name}
           </Typography>
@@ -77,12 +98,21 @@ export default function Contact({
           <Typography
             variant="body2"
             color="textSecondary"
-            className={classes.listItemText}
+            className={clsx(
+              classes.listItemText,
+
+              !messageSeen && classes.contactNewMessage
+            )}
           >
             {`${contact.lastMessage?.sender}: ${contact.lastMessage?.text}`}
           </Typography>
         }
       />
+      {!messageSeen && (
+        <div className={classes.newMessageIcon}>
+          <RadioButtonCheckedIcon color="secondary" />
+        </div>
+      )}
     </ListItem>
   );
 }
