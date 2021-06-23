@@ -1,11 +1,19 @@
 import React, { ReactElement, useRef } from "react";
-import { makeStyles, TextField } from "@material-ui/core";
+import { IconButton, makeStyles, TextField } from "@material-ui/core";
+import SendIcon from "@material-ui/icons/Send";
+import ImageIcon from "@material-ui/icons/Image";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useSocket } from "../../../contexts/SocketContext";
 import { ContactType } from "../../../hooks/useFetchContacts";
 
 const useStyles = makeStyles({
+  inputWrapper: {
+    display: "flex",
+  },
   chatInput: { backgroundColor: "white" },
+  fileInput: {
+    display: "none",
+  },
 });
 
 interface Props {
@@ -41,7 +49,19 @@ export default function ChatInput({ contact }: Props): ReactElement {
   };
 
   return (
-    <form onSubmit={chatFormSubmitHandler}>
+    <form className={classes.inputWrapper} onSubmit={chatFormSubmitHandler}>
+      <input
+        accept="image/"
+        className={classes.fileInput}
+        id="image-input"
+        type="file"
+      />
+      <label htmlFor="image-input">
+        <IconButton color="secondary" component="span">
+          <ImageIcon />
+        </IconButton>
+      </label>
+
       <TextField
         inputRef={inputRef}
         variant="outlined"
@@ -52,6 +72,9 @@ export default function ChatInput({ contact }: Props): ReactElement {
         required
         InputProps={{ className: classes.chatInput }}
       />
+      <IconButton color="secondary" type="submit">
+        <SendIcon />
+      </IconButton>
     </form>
   );
 }

@@ -5,7 +5,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { SocketProvider } from "./contexts/SocketContext";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core";
-import AvatarProvider from "./contexts/AvatarContext";
+import UsersMapProvider from "./contexts/UsersMapContext";
 
 const theme = createMuiTheme({
   palette: {
@@ -26,9 +26,9 @@ ReactDOM.render(
       <ThemeProvider theme={theme}>
         <AuthProvider>
           <SocketProvider>
-            <AvatarProvider>
+            <UsersMapProvider>
               <App />
-            </AvatarProvider>
+            </UsersMapProvider>
           </SocketProvider>
         </AuthProvider>
       </ThemeProvider>

@@ -8,10 +8,11 @@ import {
   Drawer,
 } from "@material-ui/core";
 import GroupAddIcon from "@material-ui/icons/GroupAdd";
+import RecentActorsIcon from "@material-ui/icons/RecentActors";
 import AddContactDialog from "./AddContactDialog";
-import { useAvatar } from "../../../contexts/AvatarContext";
 import { ContactType } from "../../../hooks/useFetchContacts";
 import Contact from "./Contact";
+import { useUsersMap } from "../../../contexts/UsersMapContext";
 
 export const contactsWidth = 300;
 
@@ -53,7 +54,7 @@ export default function Contacts({
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const classes = useStyles();
-  const { fetchAndMapUsers } = useAvatar();
+  const { fetchAndMapUsers } = useUsersMap();
 
   const handleToggle = () => {
     return setDialogOpen(!dialogOpen);

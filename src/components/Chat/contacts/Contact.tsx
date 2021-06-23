@@ -11,8 +11,8 @@ import { AvatarGroup } from "@material-ui/lab";
 import RadioButtonCheckedIcon from "@material-ui/icons/RadioButtonChecked";
 import clsx from "clsx";
 import { ContactType } from "../../../hooks/useFetchContacts";
-import { useAvatar } from "../../../contexts/AvatarContext";
 import { useAuth } from "../../../contexts/AuthContext";
+import { useUsersMap } from "../../../contexts/UsersMapContext";
 
 const useStyles = makeStyles((theme) => ({
   contactTitle: {
@@ -49,7 +49,7 @@ export default function Contact({
   setContactHandler,
 }: Props): ReactElement {
   const classes = useStyles();
-  const { userAvatarMap } = useAvatar();
+  const { usersMap } = useUsersMap();
   const { user } = useAuth();
 
   const messageSeen =
@@ -77,7 +77,12 @@ export default function Contact({
           {contact.members.map((member) => {
             if (member === user?.uid) return null;
 
-            return <Avatar key={member} src={userAvatarMap[member]} />;
+            return (
+              <Avatar
+                key={member}
+                src={usersMap[member] ? usersMap[member].imageUrl : undefined}
+              />
+            );
           })}
         </AvatarGroup>
       </ListItemIcon>

@@ -124,9 +124,6 @@ export default function useFetchContacts() {
       setContacts(contactsTmp);
 
       if (contact && contactToShift.id === contact.id) {
-        console.log(contactToShift);
-        console.log(contact);
-        console.log("zd");
         setContact(contactToShift as ContactType);
       }
     },

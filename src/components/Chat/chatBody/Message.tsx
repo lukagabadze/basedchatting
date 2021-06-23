@@ -8,13 +8,24 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     margin: theme.spacing(1),
   },
+  userAvatar: {
+    marginTop: theme.spacing(3),
+  },
+  userNameOwn: {
+    marginRight: theme.spacing(1),
+  },
+  userNameOther: {
+    marginLeft: theme.spacing(1),
+  },
   messagePaper: {
     wordBreak: "break-word",
-    padding: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(2),
+    paddingTop: theme.spacing(1),
     marginLeft: 3,
     marginRight: 3,
     display: "flex",
-    flexDirection: "row",
+    flexDirection: "column",
     maxWidth: "400px",
     minWidth: "100px",
   },
@@ -23,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "white",
   },
   messageOwn: {
-    backgroundColor: "#6969FF",
+    backgroundColor: theme.palette.secondary.light,
     color: "white",
   },
 }));
@@ -31,13 +42,15 @@ const useStyles = makeStyles((theme) => ({
 interface Props {
   message: MessageType;
   isOwn: boolean;
-  userImageUrl: string;
+  userImageUrl?: string;
+  userName?: string;
 }
 
 export default function Message({
   message,
   isOwn,
   userImageUrl,
+  userName,
 }: Props): ReactElement {
   const classes = useStyles();
 
@@ -48,18 +61,30 @@ export default function Message({
         isOwn ? { flexDirection: "row-reverse" } : { flexDirection: "row" }
       }
     >
-      {userImageUrl && <Avatar src={userImageUrl} />}
-      <Paper
-        elevation={3}
-        className={clsx(
-          classes.messagePaper,
-          isOwn ? classes.messageOwn : classes.messageOther
-        )}
+      {userImageUrl && (
+        <Avatar className={classes.userAvatar} src={userImageUrl} />
+      )}
+      <div
+      // style={{ backgroundColor: "red" }}
       >
-        <Typography gutterBottom paragraph>
-          {message.text}
+        <Typography
+          align={isOwn ? "right" : "left"}
+          variant="subtitle2"
+          color="textPrimary"
+          className={clsx(isOwn ? classes.userNameOwn : classes.userNameOther)}
+        >
+          {userName}
         </Typography>
-      </Paper>
+        <Paper
+          elevation={3}
+          className={clsx(
+            classes.messagePaper,
+            isOwn ? classes.messageOwn : classes.messageOther
+          )}
+        >
+          <Typography paragraph>{message.text}</Typography>
+        </Paper>
+      </div>
 
       <div style={{ flexGrow: 1, display: !isOwn ? "block" : "none" }}></div>
     </Box>

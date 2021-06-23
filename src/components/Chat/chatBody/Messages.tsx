@@ -1,9 +1,9 @@
 import { RefObject, ReactElement, useRef, useEffect, useCallback } from "react";
 import { makeStyles } from "@material-ui/core";
 import { useAuth } from "../../../contexts/AuthContext";
-import { useAvatar } from "../../../contexts/AvatarContext";
 import Message from "./Message";
 import { MessageType } from "../../../hooks/useFetchMessage";
+import { useUsersMap } from "../../../contexts/UsersMapContext";
 
 const useStyles = makeStyles({
   chatDiv: {
@@ -27,7 +27,7 @@ export default function Messages({
 }: Props): ReactElement {
   const classes = useStyles();
   const { user } = useAuth();
-  const { userAvatarMap } = useAvatar();
+  const { usersMap } = useUsersMap();
 
   useEffect(() => {
     // Scroll the user to the bottom
@@ -67,7 +67,16 @@ export default function Messages({
               <Message
                 isOwn={message.sender === user?.uid}
                 message={message}
-                userImageUrl={userAvatarMap[message.sender]}
+                userImageUrl={
+                  usersMap[message.sender]
+                    ? usersMap[message.sender].imageUrl
+                    : undefined
+                }
+                userName={
+                  usersMap[message.sender]
+                    ? usersMap[message.sender].senderName
+                    : undefined
+                }
               />
             </div>
           );
