@@ -67,7 +67,7 @@ export default function ChatInput({ contact }: Props): ReactElement {
         variant="outlined"
         fullWidth
         margin="dense"
-        color="primary"
+        color="secondary"
         rows={4}
         required
         InputProps={{ className: classes.chatInput }}
