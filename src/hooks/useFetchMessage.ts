@@ -6,7 +6,8 @@ import { ContactType } from "./useFetchContacts";
 
 export type MessageType = {
   id: string;
-  text: string;
+  text?: string;
+  imageUrl?: string;
   sender: string;
   contactId: string;
   createdAt: Date;
@@ -51,10 +52,11 @@ export default function useFetchMessage({
 
       let messagesList: MessageType[] = [];
       snapshot.forEach((doc) => {
-        const { text, sender, contactId, createdAt } = doc.data();
+        const { text, imageUrl, sender, contactId, createdAt } = doc.data();
         messagesList.push({
           id: doc.id,
           text,
+          imageUrl,
           sender,
           contactId,
           createdAt,

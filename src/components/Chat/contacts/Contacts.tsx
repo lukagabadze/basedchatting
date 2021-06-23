@@ -8,7 +8,6 @@ import {
   Drawer,
 } from "@material-ui/core";
 import GroupAddIcon from "@material-ui/icons/GroupAdd";
-import RecentActorsIcon from "@material-ui/icons/RecentActors";
 import AddContactDialog from "./AddContactDialog";
 import { ContactType } from "../../../hooks/useFetchContacts";
 import Contact from "./Contact";

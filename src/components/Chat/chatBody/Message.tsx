@@ -30,6 +30,15 @@ const useStyles = makeStyles((theme) => ({
     minWidth: "100px",
   },
 
+  messageImage: {
+    maxWidth: theme.spacing(25),
+    maxHeight: theme.spacing(25),
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    border: "3px solid",
+    borderColor: theme.palette.secondary.dark,
+  },
+
   messageOther: {
     backgroundColor: "white",
   },
@@ -64,9 +73,7 @@ export default function Message({
       {userImageUrl && (
         <Avatar className={classes.userAvatar} src={userImageUrl} />
       )}
-      <div
-      // style={{ backgroundColor: "red" }}
-      >
+      <div>
         <Typography
           align={isOwn ? "right" : "left"}
           variant="subtitle2"
@@ -75,15 +82,20 @@ export default function Message({
         >
           {userName}
         </Typography>
-        <Paper
-          elevation={3}
-          className={clsx(
-            classes.messagePaper,
-            isOwn ? classes.messageOwn : classes.messageOther
-          )}
-        >
-          <Typography paragraph>{message.text}</Typography>
-        </Paper>
+        {message.text && (
+          <Paper
+            elevation={3}
+            className={clsx(
+              classes.messagePaper,
+              isOwn ? classes.messageOwn : classes.messageOther
+            )}
+          >
+            <Typography paragraph>{message.text}</Typography>
+          </Paper>
+        )}
+        {message.imageUrl && (
+          <img className={classes.messageImage} src={message.imageUrl} alt="" />
+        )}
       </div>
 
       <div style={{ flexGrow: 1, display: !isOwn ? "block" : "none" }}></div>

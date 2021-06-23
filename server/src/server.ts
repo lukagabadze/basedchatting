@@ -7,7 +7,8 @@ const io = new Server(httpServer, {});
 
 export type MessageType = {
   id: string;
-  text: string;
+  text?: string;
+  imageUrl?: string;
   sender: string;
   contactId: string;
   createdAt: Date;
@@ -45,7 +46,7 @@ io.on("connection", (socket: Socket) => {
       lastMessageDate: message.createdAt,
       lastMessage: {
         sender: user.displayName,
-        text: message.text,
+        text: message.text ? message.text : "Sent an image",
       },
       seenBy: [message.sender],
     });
