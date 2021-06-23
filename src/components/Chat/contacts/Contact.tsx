@@ -77,12 +77,7 @@ export default function Contact({
           {contact.members.map((member) => {
             if (member === user?.uid) return null;
 
-            return (
-              <Avatar
-                key={member}
-                src={usersMap[member] ? usersMap[member].imageUrl : undefined}
-              />
-            );
+            return <Avatar key={member} src={usersMap[member]?.imageUrl} />;
           })}
         </AvatarGroup>
       </ListItemIcon>

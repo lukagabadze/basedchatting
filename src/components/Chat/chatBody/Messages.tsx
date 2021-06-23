@@ -67,16 +67,8 @@ export default function Messages({
               <Message
                 isOwn={message.sender === user?.uid}
                 message={message}
-                userImageUrl={
-                  usersMap[message.sender]
-                    ? usersMap[message.sender].imageUrl
-                    : undefined
-                }
-                userName={
-                  usersMap[message.sender]
-                    ? usersMap[message.sender].senderName
-                    : undefined
-                }
+                userImageUrl={usersMap[message.sender]?.imageUrl}
+                userName={usersMap[message.sender]?.senderName}
               />
             </div>
           );

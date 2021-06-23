@@ -3,6 +3,7 @@ import React, {
   ReactElement,
   useCallback,
   useContext,
+  useRef,
   useState,
 } from "react";
 import { database } from "../firebase";
@@ -33,25 +34,26 @@ export type UsersMapType = {
 
 export default function UsersMapProvider({ children }: Props): ReactElement {
   const [usersMap, setUsersMap] = useState<UsersMapType>({});
+  const usersMapRef = useRef<UsersMapType>({});
 
   // Fetch and map all the members profile images
   const fetchAndMapUsers = useCallback((members: string[]) => {
     const usersRef = database.collection("users");
 
-    const usersMapTmp = { ...usersMap };
     members.map(async (uid) => {
-      const snapshot = await usersRef.doc(uid).get();
+      if (usersMapRef.current[uid]) return;
 
+      const snapshot = await usersRef.doc(uid).get();
       const data = snapshot.data();
       if (!data) return;
 
-      usersMapTmp[uid] = {
+      usersMapRef.current[uid] = {
         imageUrl: data.imageUrl,
         senderName: data.displayName,
       };
     });
 
-    if (usersMapTmp !== usersMap) setUsersMap(usersMapTmp);
+    setUsersMap(usersMapRef.current);
   }, []);
 
   const value = {

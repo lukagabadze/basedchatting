@@ -73,32 +73,6 @@ export default function useFetchContacts() {
     };
   }, [socket, user, contacts, setContacts]);
 
-  useEffect(() => {
-    if (!contact) return;
-    if (!user) return;
-    if (contact.seenBy.includes(user.uid)) return;
-
-    const contactRef = database.doc(`contacts/${contact.id}`);
-
-    const newSeenBy = [...contact.seenBy, user.uid];
-
-    contactRef.update({
-      seenBy: newSeenBy,
-    });
-
-    const newContacts = contacts.map((singleContact) => {
-      if (singleContact.id === contact.id) {
-        return {
-          ...singleContact,
-          seenBy: newSeenBy,
-        };
-      }
-      return singleContact;
-    });
-
-    setContacts(newContacts);
-  }, [contact, user]);
-
   const handleContactChangeOnMessage = useCallback(
     async (contactId: string) => {
       let contactsTmp = [...contacts];
@@ -130,5 +104,11 @@ export default function useFetchContacts() {
     [contacts, contact, setContacts]
   );
 
-  return { contacts, contact, setContact, handleContactChangeOnMessage };
+  return {
+    contacts,
+    contact,
+    setContact,
+    setContacts,
+    handleContactChangeOnMessage,
+  };
 }
