@@ -1,5 +1,13 @@
-import { ReactElement } from "react";
-import { Typography, makeStyles, Paper, Box, Avatar } from "@material-ui/core";
+import { ReactElement, useCallback, useState } from "react";
+import {
+  Typography,
+  makeStyles,
+  Paper,
+  Box,
+  Avatar,
+  Dialog,
+  DialogContent,
+} from "@material-ui/core";
 import { MessageType } from "../../../hooks/useFetchMessage";
 import clsx from "clsx";
 
@@ -22,8 +30,8 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(2),
     paddingTop: theme.spacing(1),
-    marginLeft: 3,
-    marginRight: 3,
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
     display: "flex",
     flexDirection: "column",
     maxWidth: "400px",
@@ -37,6 +45,15 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
     border: "3px solid",
     borderColor: theme.palette.secondary.dark,
+    cursor: "pointer",
+    "&:hover": {
+      opacity: "60%",
+    },
+  },
+
+  dialogImage: {
+    maxWidth: "80vw",
+    maxHeight: "80vh",
   },
 
   messageOther: {
@@ -47,6 +64,11 @@ const useStyles = makeStyles((theme) => ({
     color: "white",
   },
 }));
+
+interface imageModalType {
+  open: boolean;
+  imageUrl?: string;
+}
 
 interface Props {
   message: MessageType;
@@ -61,7 +83,16 @@ export default function Message({
   userImageUrl,
   userName,
 }: Props): ReactElement {
+  const [imageModal, setImageModal] = useState<imageModalType>({ open: false });
   const classes = useStyles();
+
+  const imageOnClickHandler = useCallback((imageUrl: string) => {
+    setImageModal({ open: true, imageUrl: imageUrl });
+  }, []);
+
+  const modalOnCloseHandler = useCallback(() => {
+    setImageModal({ open: false, imageUrl: undefined });
+  }, []);
 
   return (
     <Box
@@ -94,11 +125,30 @@ export default function Message({
           </Paper>
         )}
         {message.imageUrl && (
-          <img className={classes.messageImage} src={message.imageUrl} alt="" />
+          <img
+            className={classes.messageImage}
+            src={message.imageUrl}
+            alt=""
+            onClick={() => imageOnClickHandler(message.imageUrl!)}
+          />
         )}
       </div>
 
-      <div style={{ flexGrow: 1, display: !isOwn ? "block" : "none" }}></div>
+      <Dialog
+        maxWidth={"lg"}
+        open={imageModal.open}
+        onClose={modalOnCloseHandler}
+      >
+        {imageModal.imageUrl && (
+          <DialogContent>
+            <img
+              className={classes.dialogImage}
+              src={imageModal.imageUrl}
+              alt=""
+            />
+          </DialogContent>
+        )}
+      </Dialog>
     </Box>
   );
 }
