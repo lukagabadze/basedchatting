@@ -10,21 +10,36 @@ import {
 } from "@material-ui/core";
 import { MessageType } from "../../../hooks/useFetchMessage";
 import clsx from "clsx";
+import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
   messageDiv: {
     display: "flex",
-    margin: theme.spacing(1),
+    marginBottom: theme.spacing(1),
   },
+  messageContentDiv: {
+    display: "flex",
+    flexDirection: "column",
+  },
+
   userAvatar: {
     marginTop: theme.spacing(3),
   },
-  userNameOwn: {
-    marginRight: theme.spacing(1),
+  userName: {
+    marginRight: theme.spacing(2),
   },
-  userNameOther: {
-    marginLeft: theme.spacing(1),
+
+  messageHeader: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingLeft: theme.spacing(1),
   },
+
+  messageDate: {
+    paddingRight: theme.spacing(1),
+  },
+
   messagePaper: {
     wordBreak: "break-word",
     paddingLeft: theme.spacing(1),
@@ -51,9 +66,8 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 
-  dialogImage: {
-    maxWidth: "80vw",
-    maxHeight: "80vh",
+  messageSentFromNowDate: {
+    marginLeft: theme.spacing(1),
   },
 
   messageOther: {
@@ -62,6 +76,11 @@ const useStyles = makeStyles((theme) => ({
   messageOwn: {
     backgroundColor: theme.palette.secondary.main,
     color: "white",
+  },
+
+  dialogImage: {
+    maxWidth: "80vw",
+    maxHeight: "80vh",
   },
 }));
 
@@ -101,21 +120,33 @@ export default function Message({
         isOwn ? { flexDirection: "row-reverse" } : { flexDirection: "row" }
       }
     >
+      {/* User image */}
       {userImageUrl && (
         <Avatar className={classes.userAvatar} src={userImageUrl} />
       )}
-      <div>
-        <Typography
-          align={isOwn ? "right" : "left"}
-          variant="subtitle2"
-          color="textPrimary"
-          className={clsx(isOwn ? classes.userNameOwn : classes.userNameOther)}
-        >
-          {userName}
-        </Typography>
+
+      <div className={classes.messageContentDiv}>
+        <div className={classes.messageHeader}>
+          {/* Username */}
+          <Typography
+            align={isOwn ? "right" : "left"}
+            variant="subtitle2"
+            color="textPrimary"
+            className={classes.userName}
+          >
+            {userName}
+          </Typography>
+
+          {/* Message Date */}
+          <Typography variant="subtitle2" className={classes.messageDate}>
+            {moment(message.createdAt).format("hh:mm")}
+          </Typography>
+        </div>
+
+        {/* Message text content */}
         {message.text && (
           <Paper
-            elevation={3}
+            elevation={1}
             className={clsx(
               classes.messagePaper,
               isOwn ? classes.messageOwn : classes.messageOther
@@ -124,6 +155,7 @@ export default function Message({
             <Typography paragraph>{message.text}</Typography>
           </Paper>
         )}
+        {/* Message image content */}
         {message.imageUrl && (
           <img
             className={classes.messageImage}
@@ -132,8 +164,16 @@ export default function Message({
             onClick={() => imageOnClickHandler(message.imageUrl!)}
           />
         )}
+        {/* Message sent from now */}
+        <Typography
+          className={classes.messageSentFromNowDate}
+          variant="subtitle2"
+        >
+          {moment(message.createdAt).fromNow()}
+        </Typography>
       </div>
 
+      {/* Image view dialog */}
       <Dialog
         maxWidth={"lg"}
         open={imageModal.open}
