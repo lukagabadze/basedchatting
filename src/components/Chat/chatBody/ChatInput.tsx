@@ -35,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
   inputImage: {
     maxWidth: theme.spacing(20),
     maxHeight: theme.spacing(20),
+    border: "3px solid black",
   },
   fileInput: {
     display: "none",
