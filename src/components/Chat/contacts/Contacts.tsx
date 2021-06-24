@@ -23,17 +23,12 @@ const useStyles = makeStyles((theme) => ({
   list: {
     direction: "ltr",
   },
-  listItem: {
-    direction: "ltr",
-    borderTop: "1px solid black",
-  },
-
   contactsHeader: {
     display: "flex",
     justifyContent: "space-between",
     flexDirection: "row-reverse",
-    alignItems: "center",
-    margin: "10px",
+    margin: theme.spacing(1),
+    marginBottom: 0,
   },
   addContactButton: {},
   toolbar: theme.mixins.toolbar,
@@ -82,11 +77,11 @@ export default function Contacts({
     >
       <div className={classes.toolbar} />
       <Box className={classes.contactsHeader}>
-        <Typography align="center" variant="h5">
+        <Typography variant="h4" style={{ fontWeight: "bold" }}>
           Contacts
         </Typography>
         <Fab
-          color="primary"
+          color="secondary"
           size="small"
           className={classes.addContactButton}
           onClick={handleToggle}

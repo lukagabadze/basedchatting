@@ -10,10 +10,13 @@ import UsersMapProvider from "./contexts/UsersMapContext";
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: "#ffc942",
+      main: "#1f487e",
     },
     secondary: {
-      main: "#00838f",
+      main: "#274c77",
+    },
+    background: {
+      default: "#e0e1dd",
     },
   },
 });

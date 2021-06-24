@@ -6,15 +6,15 @@ import ChatInput from "./ChatInput";
 import { ContactType } from "../../../hooks/useFetchContacts";
 import { MessagesType, MessageType } from "../../../hooks/useFetchMessage";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   gridContainer: {
     marginLeft: contactsWidth,
     display: "flex",
     flexDirection: "column",
-    backgroundColor: "#d1d1d1",
+    backgroundColor: theme.palette.background.default,
   },
   chatHeader: {
-    backgroundColor: "#9A9AA9",
+    backgroundColor: theme.palette.secondary.main,
     color: "white",
     padding: 6,
     borderBottom: "1px solid black",
@@ -27,7 +27,7 @@ const useStyles = makeStyles({
     marginLeft: 10,
     marginRight: 10,
   },
-});
+}));
 
 interface Props {
   contactProp: ContactType;

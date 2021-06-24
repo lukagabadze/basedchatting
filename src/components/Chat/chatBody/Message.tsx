@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "white",
   },
   messageOwn: {
-    backgroundColor: theme.palette.secondary.light,
+    backgroundColor: theme.palette.secondary.main,
     color: "white",
   },
 }));
