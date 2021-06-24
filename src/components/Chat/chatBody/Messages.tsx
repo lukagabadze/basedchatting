@@ -64,12 +64,14 @@ export default function Messages({
               ref={ind === messages.length - 1 ? lastMessageRef : null}
               key={message.id}
             >
-              <Message
-                isOwn={message.sender === user?.uid}
-                message={message}
-                userImageUrl={usersMap[message.sender]?.imageUrl}
-                userName={usersMap[message.sender]?.senderName}
-              />
+              {(message.text || message.imageUrl) && (
+                <Message
+                  isOwn={message.sender === user?.uid}
+                  message={message}
+                  userImageUrl={usersMap[message.sender]?.imageUrl}
+                  userName={usersMap[message.sender]?.senderName}
+                />
+              )}
             </div>
           );
         })}

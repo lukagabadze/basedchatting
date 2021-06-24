@@ -84,7 +84,7 @@ export default function ChatInput({ contact }: Props): ReactElement {
       socket.emit("new-message", { ...newMessage, text });
     }
     if (file) {
-      const fileName = `${contact.id}-${user.uid}-${file.name}`;
+      const fileName = `${contact.id}-${user.uid}-${Date.now()}`;
       const storageRef = storage.ref(`message-images/${fileName}`);
       await storageRef.put(file);
       const url = await storageRef.getDownloadURL();
