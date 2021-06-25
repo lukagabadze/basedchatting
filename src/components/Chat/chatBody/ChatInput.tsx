@@ -21,7 +21,7 @@ import { storage } from "../../../firebase";
 const useStyles = makeStyles((theme) => ({
   inputWrapper: {
     display: "flex",
-    alignItems: "center",
+    alignItems: "end",
   },
   chatInputDiv: {
     width: "100%",
@@ -34,6 +34,18 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(2),
     marginRight: theme.spacing(2),
   },
+
+  fileInput: {
+    display: "none",
+  },
+  inputImage: {
+    maxWidth: theme.spacing(10),
+    maxHeight: theme.spacing(10),
+    border: "3px solid black",
+  },
+  imageCancelBadge: {
+    zIndex: 0,
+  },
   cancelIcon: {
     backgroundColor: "black",
     borderRadius: "100%",
@@ -42,19 +54,13 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: "red",
     },
   },
-  inputImage: {
-    maxWidth: theme.spacing(20),
-    maxHeight: theme.spacing(20),
-    border: "3px solid black",
-  },
-  fileInput: {
-    display: "none",
-  },
+
   iconButtonDiv: {
     display: "flex",
   },
 
   popperDiv: {
+    zIndex: 10,
     backgroundColor: theme.palette.primary.dark,
     padding: theme.spacing(1),
     border: "3px solid white",
@@ -187,6 +193,7 @@ export default function ChatInput({ contact }: Props): ReactElement {
                 {imageInput && (
                   <div className={classes.inputImageDiv}>
                     <Badge
+                      className={classes.imageCancelBadge}
                       badgeContent={
                         <CancelIcon
                           className={classes.cancelIcon}
