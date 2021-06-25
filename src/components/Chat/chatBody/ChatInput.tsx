@@ -1,8 +1,18 @@
-import React, { ReactElement, useCallback, useRef, useState } from "react";
-import { Badge, IconButton, makeStyles, TextField } from "@material-ui/core";
+import React, { ReactElement, useCallback, useState } from "react";
+import {
+  Badge,
+  Divider,
+  IconButton,
+  makeStyles,
+  Popper,
+  TextField,
+  Typography,
+} from "@material-ui/core";
 import SendIcon from "@material-ui/icons/Send";
 import ImageIcon from "@material-ui/icons/Image";
 import CancelIcon from "@material-ui/icons/Cancel";
+import MoodIcon from "@material-ui/icons/Mood";
+import emojis from "emoji.json";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useSocket } from "../../../contexts/SocketContext";
 import { ContactType } from "../../../hooks/useFetchContacts";
@@ -40,6 +50,25 @@ const useStyles = makeStyles((theme) => ({
   fileInput: {
     display: "none",
   },
+  iconButtonDiv: {
+    display: "flex",
+  },
+
+  popperDiv: {
+    backgroundColor: theme.palette.primary.dark,
+    padding: theme.spacing(1),
+    border: "3px solid white",
+    color: "white",
+    maxHeight: "250px",
+    width: "220px",
+    overflowY: "scroll",
+    wordBreaK: "break-word",
+    userSelect: "none",
+  },
+  emoji: {
+    cursor: "pointer",
+    margin: theme.spacing(1),
+  },
 }));
 
 interface Props {
@@ -52,8 +81,9 @@ interface ImageInputType {
 }
 
 export default function ChatInput({ contact }: Props): ReactElement {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [input, setInput] = useState<string>("");
   const [imageInput, setImageInput] = useState<ImageInputType | null>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const classes = useStyles();
   const { user } = useAuth();
@@ -63,14 +93,15 @@ export default function ChatInput({ contact }: Props): ReactElement {
     e.preventDefault();
     if (!user) return;
     if (!contact) return;
-    if (!inputRef.current) return;
+    if (!input) return;
     if (!socket) return;
 
-    const text = inputRef.current.value;
-    inputRef.current.value = "";
+    const text = input;
+    setInput("");
 
     const file = imageInput?.file;
     setImageInput(null);
+    setAnchorEl(null);
 
     if (!text && !file) return;
 
@@ -115,6 +146,15 @@ export default function ChatInput({ contact }: Props): ReactElement {
     setImageInput(null);
   }, []);
 
+  // Emoji handler
+  const handlePopperToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(anchorEl ? null : e.currentTarget);
+  };
+
+  const handleEmojiOnClick = (emoji: string) => {
+    setInput(`${input} ${emoji}`);
+  };
+
   return (
     <form className={classes.inputWrapper} onSubmit={chatFormSubmitHandler}>
       <input
@@ -131,7 +171,10 @@ export default function ChatInput({ contact }: Props): ReactElement {
       </label>
       <div className={classes.chatInputDiv}>
         <TextField
-          inputRef={inputRef}
+          value={input}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setInput(e.target.value)
+          }
           variant="outlined"
           fullWidth
           margin="dense"
@@ -166,11 +209,33 @@ export default function ChatInput({ contact }: Props): ReactElement {
         />
       </div>
 
-      <div>
+      <div className={classes.iconButtonDiv}>
+        <IconButton onClick={handlePopperToggle}>
+          <MoodIcon color="secondary" />
+        </IconButton>
         <IconButton color="secondary" type="submit">
           <SendIcon />
         </IconButton>
       </div>
+
+      {/* Emoji Popper */}
+      <Popper open={Boolean(anchorEl)} anchorEl={anchorEl} placement="top">
+        <div className={classes.popperDiv}>
+          <Typography variant="h6">Emojis</Typography>
+          <Divider light />
+          {emojis.slice(0, 100).map((emoji) => (
+            <Typography
+              key={emoji.codes}
+              onClick={() => handleEmojiOnClick(emoji.char)}
+              className={classes.emoji}
+              variant="h5"
+              component="span"
+            >
+              {emoji.char}
+            </Typography>
+          ))}
+        </div>
+      </Popper>
     </form>
   );
 }
