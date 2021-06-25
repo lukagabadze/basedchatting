@@ -5,7 +5,9 @@ import {
   makeStyles,
   Typography,
   Fab,
-  Drawer,
+  useTheme,
+  useMediaQuery,
+  SwipeableDrawer,
 } from "@material-ui/core";
 import GroupAddIcon from "@material-ui/icons/GroupAdd";
 import AddContactDialog from "./AddContactDialog";
@@ -38,17 +40,26 @@ interface Props {
   contacts: ContactType[];
   chosenContact: ContactType | null;
   setContactHandler: (contact: ContactType) => void;
+  drawerOpen: boolean;
+  handleDrawerOpen: () => void;
+  handleDrawerClose: () => void;
 }
 
 export default function Contacts({
   contacts,
   chosenContact,
   setContactHandler,
+  drawerOpen,
+  handleDrawerClose,
+  handleDrawerOpen,
 }: Props): ReactElement {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const classes = useStyles();
   const { fetchAndMapUsers } = useUsersMap();
+
+  const theme = useTheme();
+  const md = useMediaQuery(theme.breakpoints.up("md"));
 
   const handleToggle = () => {
     return setDialogOpen(!dialogOpen);
@@ -68,14 +79,16 @@ export default function Contacts({
   }, [contacts, fetchAndMapUsers]);
 
   return (
-    <Drawer
+    <SwipeableDrawer
       className={classes.contactsDrawer}
-      variant="persistent"
+      variant={md ? "permanent" : "temporary"}
+      open={drawerOpen}
+      onClose={handleDrawerClose}
+      onOpen={handleDrawerOpen}
       anchor="left"
-      open={true}
-      PaperProps={{ style: { width: contactsWidth } }}
+      PaperProps={{ style: md ? { width: contactsWidth } : { width: "100vw" } }}
     >
-      <div className={classes.toolbar} />
+      {md && <div className={classes.toolbar} />}
       <Box className={classes.contactsHeader}>
         <Typography variant="h4" style={{ fontWeight: "bold" }}>
           Contacts
@@ -100,6 +113,6 @@ export default function Contacts({
         ))}
       </List>
       <AddContactDialog open={dialogOpen} handleToggle={handleToggle} />
-    </Drawer>
+    </SwipeableDrawer>
   );
 }

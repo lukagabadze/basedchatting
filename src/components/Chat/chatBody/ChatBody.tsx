@@ -1,5 +1,13 @@
 import { RefObject, ReactElement, useEffect, useState } from "react";
-import { Box, makeStyles, Typography } from "@material-ui/core";
+import {
+  Box,
+  IconButton,
+  makeStyles,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@material-ui/core";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import { contactsWidth } from "../contacts/Contacts";
 import Messages from "./Messages";
 import ChatInput from "./ChatInput";
@@ -8,7 +16,6 @@ import { MessagesType, MessageType } from "../../../hooks/useFetchMessage";
 
 const useStyles = makeStyles((theme) => ({
   gridContainer: {
-    marginLeft: contactsWidth,
     display: "flex",
     flexDirection: "column",
     backgroundColor: theme.palette.background.default,
@@ -16,16 +23,25 @@ const useStyles = makeStyles((theme) => ({
   chatHeader: {
     backgroundColor: theme.palette.secondary.main,
     color: "white",
-    padding: 6,
+    padding: theme.spacing(1),
     borderBottom: "1px solid black",
+    display: "flex",
+    alignItems: "center",
+  },
+  drawerIcon: {
+    // backgroundColor: "red",
+    color: "white",
+    height: theme.spacing(3),
+    width: theme.spacing(3),
+    marginRight: theme.spacing(1),
   },
   chatMessagesDiv: {
     flex: 1,
     overflowY: "auto",
   },
   chatInputDiv: {
-    marginLeft: 10,
-    marginRight: 10,
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
   },
 }));
 
@@ -35,6 +51,8 @@ interface Props {
   loading: boolean;
   fetchOldMessages(lastMessage: MessageType): void;
   chatDivRef: RefObject<HTMLDivElement>;
+  handleDrawerOpen: () => void;
+  handleDrawerClose: () => void;
 }
 
 export default function ChatBody({
@@ -43,21 +61,36 @@ export default function ChatBody({
   loading,
   fetchOldMessages,
   chatDivRef,
+  handleDrawerClose,
+  handleDrawerOpen,
 }: Props): ReactElement {
   const [contact, setContact] = useState<ContactType | null>(contactProp);
 
   const classes = useStyles();
+  const theme = useTheme();
+  const md = useMediaQuery(theme.breakpoints.up("md"));
 
   useEffect(() => {
     setContact(contactProp);
   }, [contactProp]);
 
   return (
-    <Box height="100%" className={classes.gridContainer}>
+    <Box
+      height="100%"
+      className={classes.gridContainer}
+      style={md ? { marginLeft: contactsWidth } : undefined}
+    >
       {/* The Header */}
-      <Typography variant="h5" className={classes.chatHeader}>
-        {contact && contact.name}
-      </Typography>
+      <div className={classes.chatHeader}>
+        {!md && (
+          <IconButton className={classes.drawerIcon} onClick={handleDrawerOpen}>
+            <ArrowBackIcon />
+          </IconButton>
+        )}
+        <Typography variant="h6" noWrap>
+          {contact && contact.name}
+        </Typography>
+      </div>
 
       {/* The Messages */}
       <div className={classes.chatMessagesDiv}>

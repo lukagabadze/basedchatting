@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useRef } from "react";
+import { ReactElement, useCallback, useRef, useState } from "react";
 import Contacts from "./contacts/Contacts";
 import ChatBody from "./chatBody/ChatBody";
 import useFetchMessage from "../../hooks/useFetchMessage";
@@ -8,6 +8,7 @@ import { database } from "../../firebase";
 
 export default function Chat(): ReactElement {
   const chatDivRef = useRef<HTMLDivElement>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const { user } = useAuth();
 
@@ -25,10 +26,19 @@ export default function Chat(): ReactElement {
     handleContactChangeOnMessage,
   });
 
+  const handleDrawerOpen = useCallback(() => {
+    setDrawerOpen(true);
+  }, []);
+
+  const handleDrawerClose = useCallback(() => {
+    setDrawerOpen(false);
+  }, []);
+
   const setContactHandler = useCallback(
     (contact: ContactType) => {
       if (!contact) return;
       setContact(contact);
+      setDrawerOpen(false);
 
       if (!user) return;
       if (contact.seenBy.includes(user.uid)) return;
@@ -62,6 +72,9 @@ export default function Chat(): ReactElement {
         contacts={contacts}
         setContactHandler={setContactHandler}
         chosenContact={contact}
+        drawerOpen={drawerOpen}
+        handleDrawerOpen={handleDrawerOpen}
+        handleDrawerClose={handleDrawerClose}
       />
       {contact && (
         <ChatBody
@@ -70,6 +83,8 @@ export default function Chat(): ReactElement {
           messages={messages}
           fetchOldMessages={fetchOldMessages}
           chatDivRef={chatDivRef}
+          handleDrawerOpen={handleDrawerOpen}
+          handleDrawerClose={handleDrawerClose}
         />
       )}
     </div>

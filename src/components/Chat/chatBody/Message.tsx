@@ -7,6 +7,8 @@ import {
   Avatar,
   Dialog,
   DialogContent,
+  useTheme,
+  useMediaQuery,
 } from "@material-ui/core";
 import { MessageType } from "../../../hooks/useFetchMessage";
 import clsx from "clsx";
@@ -105,6 +107,9 @@ export default function Message({
   const [imageModal, setImageModal] = useState<imageModalType>({ open: false });
   const classes = useStyles();
 
+  const theme = useTheme();
+  const sm = useMediaQuery(theme.breakpoints.up("sm"));
+
   const imageOnClickHandler = useCallback((imageUrl: string) => {
     setImageModal({ open: true, imageUrl: imageUrl });
   }, []);
@@ -152,7 +157,9 @@ export default function Message({
               isOwn ? classes.messageOwn : classes.messageOther
             )}
           >
-            <Typography paragraph>{message.text}</Typography>
+            <Typography variant={sm ? "body1" : "body2"} paragraph>
+              {message.text}
+            </Typography>
           </Paper>
         )}
         {/* Message image content */}
