@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  node-server:
+    container_name: node-server
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./:/app
+    environment:
+      - PORT=${PORT}
+    ports:
+      - "4000:4000"

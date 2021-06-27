@@ -29,4 +29,5 @@ yarn-error.log*
 /server/node_modules
 
 # firebase service account
-/server/serviceAccountKey.json
+/server/src/serviceAccountKey.json
+/server/.env

@@ -4,7 +4,8 @@
   "description": "backend for basedchatting",
   "main": "server.js",
   "scripts": {
-    "start": "ts-node-dev --respawn src/server.ts",
+    "start": "ts-node dist/server.js",
+    "dev": "ts-node-dev --respawn src/server.ts",
     "build": "tsc"
   },
   "keywords": [
