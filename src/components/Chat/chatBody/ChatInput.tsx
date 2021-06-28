@@ -1,22 +1,14 @@
 import React, { ReactElement, useCallback, useState } from "react";
-import {
-  Badge,
-  Divider,
-  IconButton,
-  makeStyles,
-  Popper,
-  TextField,
-  Typography,
-} from "@material-ui/core";
+import { Badge, IconButton, makeStyles, TextField } from "@material-ui/core";
 import SendIcon from "@material-ui/icons/Send";
 import ImageIcon from "@material-ui/icons/Image";
 import CancelIcon from "@material-ui/icons/Cancel";
 import MoodIcon from "@material-ui/icons/Mood";
-import emojis from "emoji.json";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useSocket } from "../../../contexts/SocketContext";
 import { ContactType } from "../../../hooks/useFetchContacts";
 import { storage } from "../../../firebase";
+import EmojiPopper from "./EmojiPopper";
 
 const useStyles = makeStyles((theme) => ({
   inputWrapper: {
@@ -59,18 +51,6 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
   },
 
-  popperDiv: {
-    zIndex: 10,
-    backgroundColor: theme.palette.primary.dark,
-    padding: theme.spacing(1),
-    border: "3px solid white",
-    color: "white",
-    maxHeight: "250px",
-    width: "220px",
-    overflowY: "scroll",
-    wordBreaK: "break-word",
-    userSelect: "none",
-  },
   emoji: {
     cursor: "pointer",
     margin: theme.spacing(1),
@@ -226,23 +206,7 @@ export default function ChatInput({ contact }: Props): ReactElement {
       </div>
 
       {/* Emoji Popper */}
-      <Popper open={Boolean(anchorEl)} anchorEl={anchorEl} placement="top">
-        <div className={classes.popperDiv}>
-          <Typography variant="h6">Emojis</Typography>
-          <Divider light />
-          {emojis.slice(0, 100).map((emoji) => (
-            <Typography
-              key={emoji.codes}
-              onClick={() => handleEmojiOnClick(emoji.char)}
-              className={classes.emoji}
-              variant="h5"
-              component="span"
-            >
-              {emoji.char}
-            </Typography>
-          ))}
-        </div>
-      </Popper>
+      <EmojiPopper anchorEl={anchorEl} />
     </form>
   );
 }
