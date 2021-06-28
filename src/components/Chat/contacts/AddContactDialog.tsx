@@ -13,6 +13,7 @@ import {
   ListItemIcon,
   ListItemText,
   makeStyles,
+  Typography,
 } from "@material-ui/core";
 import { database } from "../../../firebase";
 import { useAuth, UserType } from "../../../contexts/AuthContext";
@@ -34,8 +35,8 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   userAvatar: {
-    width: theme.spacing(7),
-    height: theme.spacing(7),
+    width: theme.spacing(6),
+    height: theme.spacing(6),
     marginRight: theme.spacing(1),
   },
 }));
@@ -50,7 +51,7 @@ export default function AddContactDialogue({
 
   const classes = useStyles();
   const { user } = useAuth();
-  const { usersMap } = useUsersMap();
+  const { usersMap, fetchAndMapUsers } = useUsersMap();
   const socket = useSocket();
 
   useEffect(() => {
@@ -60,7 +61,8 @@ export default function AddContactDialogue({
       const usersRef = database.collection("users");
       const snapshot = await usersRef.where("uid", "!=", user.uid).get();
 
-      let usersList: UserType[] = [];
+      const usersList: UserType[] = [];
+      const memberUids: string[] = [];
       snapshot.forEach((doc) => {
         const { email, displayName, imageUrl } = doc.data();
         usersList.push({
@@ -69,7 +71,10 @@ export default function AddContactDialogue({
           displayName,
           imageUrl,
         });
+        memberUids.push(doc.id);
       });
+
+      fetchAndMapUsers(memberUids);
       setUsers(usersList);
     }
 
@@ -143,15 +148,24 @@ export default function AddContactDialogue({
                 <ListItem
                   key={user.uid}
                   button
+                  divider
                   onClick={() => onCheckboxChangeHandler(user, selected)}
                 >
                   <ListItemAvatar>
                     <Avatar
                       className={classes.userAvatar}
-                      src={usersMap[user.uid].imageUrl}
+                      src={
+                        usersMap[user.uid]
+                          ? usersMap[user.uid].imageUrl
+                          : undefined
+                      }
                     />
                   </ListItemAvatar>
-                  <ListItemText primary={user.displayName} />
+                  <ListItemText
+                    primary={
+                      <Typography variant="h6">{user.displayName}</Typography>
+                    }
+                  />
                   <ListItemIcon>
                     <Checkbox checked={selected} />
                   </ListItemIcon>
