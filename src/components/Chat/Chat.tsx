@@ -84,7 +84,6 @@ export default function Chat(): ReactElement {
           fetchOldMessages={fetchOldMessages}
           chatDivRef={chatDivRef}
           handleDrawerOpen={handleDrawerOpen}
-          handleDrawerClose={handleDrawerClose}
         />
       )}
     </div>

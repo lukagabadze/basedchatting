@@ -69,6 +69,28 @@ io.on("connection", (socket: Socket) => {
       io.emit(`new-contact-${member}`, contact);
     });
   });
+
+  // Recieve, save and send back contact updates
+  socket.on("contact-update", async ({ contactId, contactName, members }) => {
+    if (!contactId) return;
+    if (!contactName && !members) return;
+
+    const contactRef = database.doc(`contacts/${contactId}`);
+    const snapshot = await contactRef.get();
+    const contact = snapshot.data() as ContactType;
+    if (!contact) return;
+
+    contact.seenBy = [];
+    if (contactName) contact.name = contactName;
+    if (members) contact.members = members;
+
+    await contactRef.update(contact);
+
+    contact.id = contactId;
+    contact.members.forEach((member) => {
+      io.emit(`contact-update-${member}`, contact);
+    });
+  });
 });
 
 const PORT = process.env.PORT;

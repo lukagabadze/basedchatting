@@ -1,4 +1,10 @@
-import { RefObject, ReactElement, useEffect, useState } from "react";
+import {
+  RefObject,
+  ReactElement,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import {
   Box,
   IconButton,
@@ -8,11 +14,13 @@ import {
   useTheme,
 } from "@material-ui/core";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import MenuIcon from "@material-ui/icons/Menu";
 import { contactsWidth } from "../contacts/Contacts";
 import Messages from "./Messages";
 import ChatInput from "./ChatInput";
 import { ContactType } from "../../../hooks/useFetchContacts";
 import { MessagesType, MessageType } from "../../../hooks/useFetchMessage";
+import ContactSettingsDrawer from "./ContactSettingsDrawer";
 
 const useStyles = makeStyles((theme) => ({
   gridContainer: {
@@ -27,9 +35,15 @@ const useStyles = makeStyles((theme) => ({
     borderBottom: "1px solid black",
     display: "flex",
     alignItems: "center",
+    justifyContent: "space-between",
+  },
+  headerLeft: {
+    maxWidth: "80vw",
+    display: "flex",
+    alignItems: "center",
+    textOverflow: "ellipsis",
   },
   drawerIcon: {
-    // backgroundColor: "red",
     color: "white",
     height: theme.spacing(3),
     width: theme.spacing(3),
@@ -43,6 +57,10 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
   },
+  openDrawer: {
+    cursor: "pointer",
+    marginRight: theme.spacing(2),
+  },
 }));
 
 interface Props {
@@ -52,7 +70,6 @@ interface Props {
   fetchOldMessages(lastMessage: MessageType): void;
   chatDivRef: RefObject<HTMLDivElement>;
   handleDrawerOpen: () => void;
-  handleDrawerClose: () => void;
 }
 
 export default function ChatBody({
@@ -61,10 +78,10 @@ export default function ChatBody({
   loading,
   fetchOldMessages,
   chatDivRef,
-  handleDrawerClose,
   handleDrawerOpen,
 }: Props): ReactElement {
   const [contact, setContact] = useState<ContactType | null>(contactProp);
+  const [open, setOpen] = useState<boolean>(false);
 
   const classes = useStyles();
   const theme = useTheme();
@@ -74,6 +91,13 @@ export default function ChatBody({
     setContact(contactProp);
   }, [contactProp]);
 
+  const drawerOpenHandler = useCallback(() => {
+    setOpen(true);
+  }, [setOpen]);
+  const drawerCloseHandler = useCallback(() => {
+    setOpen(false);
+  }, [setOpen]);
+
   return (
     <Box
       height="100%"
@@ -82,14 +106,27 @@ export default function ChatBody({
     >
       {/* The Header */}
       <div className={classes.chatHeader}>
-        {!md && (
-          <IconButton className={classes.drawerIcon} onClick={handleDrawerOpen}>
-            <ArrowBackIcon />
-          </IconButton>
-        )}
-        <Typography variant="h6" noWrap>
-          {contact && contact.name}
-        </Typography>
+        <div className={classes.headerLeft}>
+          {!md && (
+            <IconButton
+              className={classes.drawerIcon}
+              onClick={handleDrawerOpen}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+          )}
+          <Typography variant="h6" noWrap>
+            {contact && contact.name}
+          </Typography>
+        </div>
+        {/* <IconButton color="inherit" 
+        > */}
+        <MenuIcon
+          className={classes.openDrawer}
+          onClick={drawerOpenHandler}
+          fontSize={md ? "large" : "default"}
+        />
+        {/* </IconButton> */}
       </div>
 
       {/* The Messages */}
@@ -110,6 +147,15 @@ export default function ChatBody({
       <Box className={classes.chatInputDiv}>
         {contact && <ChatInput contact={contact} />}
       </Box>
+
+      {/* Contact settings drawer */}
+      {contact && (
+        <ContactSettingsDrawer
+          open={open}
+          handleClose={drawerCloseHandler}
+          contact={contact}
+        />
+      )}
     </Box>
   );
 }

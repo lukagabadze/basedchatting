@@ -24,6 +24,21 @@ export default function useFetchContacts() {
   const socket = useSocket();
 
   useEffect(() => {
+    if (!contact) return;
+
+    let contactInd: number | null = null;
+    contacts.forEach((newContact, ind) => {
+      if (newContact.id === contact.id) {
+        contactInd = ind;
+      }
+    });
+
+    if (contactInd !== null) {
+      setContact(contacts[contactInd]);
+    }
+  }, [contacts]);
+
+  useEffect(() => {
     async function fetchContacts() {
       if (!user) return;
       const contactsRef = database.collection("contacts");
@@ -60,6 +75,7 @@ export default function useFetchContacts() {
     fetchContacts();
   }, [user]);
 
+  // Listen for new contacts
   useEffect(() => {
     if (!user) return;
     if (!socket) return;
@@ -69,9 +85,29 @@ export default function useFetchContacts() {
     });
 
     return () => {
-      socket.off(`new-message-${user.uid}`);
+      socket.off(`new-contact-${user.uid}`);
     };
   }, [socket, user, contacts, setContacts]);
+
+  // Listen for contact updates
+  useEffect(() => {
+    if (!user) return;
+    if (!socket) return;
+
+    socket.on(`contact-update-${user.uid}`, (contact: ContactType) => {
+      let contactInd: number | null = null;
+      contacts.map((oldContact, ind) => {
+        if (oldContact.id === contact.id) contactInd = ind;
+      });
+
+      if (contactInd === null) return setContacts([contact, ...contacts]);
+
+      const newContacts = [...contacts];
+      newContacts.splice(contactInd, 1);
+
+      return setContacts([contact, ...newContacts]);
+    });
+  }, [user, socket, contacts]);
 
   const handleContactChangeOnMessage = useCallback(
     async (contactId: string) => {
