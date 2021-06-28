@@ -2,7 +2,6 @@ import { ReactElement, useCallback, useState } from "react";
 import {
   Typography,
   makeStyles,
-  Paper,
   Box,
   Avatar,
   Dialog,
@@ -11,8 +10,8 @@ import {
   useMediaQuery,
 } from "@material-ui/core";
 import { MessageType } from "../../../hooks/useFetchMessage";
-import clsx from "clsx";
 import moment from "moment";
+import MessageText from "./MessageText";
 
 const useStyles = makeStyles((theme) => ({
   messageDiv: {
@@ -42,19 +41,6 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: theme.spacing(1),
   },
 
-  messagePaper: {
-    wordBreak: "break-word",
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(2),
-    paddingTop: theme.spacing(1),
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    display: "flex",
-    flexDirection: "column",
-    maxWidth: "400px",
-    minWidth: "100px",
-  },
-
   messageImage: {
     maxWidth: theme.spacing(25),
     maxHeight: theme.spacing(25),
@@ -70,14 +56,6 @@ const useStyles = makeStyles((theme) => ({
 
   messageSentFromNowDate: {
     marginLeft: theme.spacing(1),
-  },
-
-  messageOther: {
-    backgroundColor: "white",
-  },
-  messageOwn: {
-    backgroundColor: theme.palette.secondary.main,
-    color: "white",
   },
 
   dialogImage: {
@@ -150,17 +128,7 @@ export default function Message({
 
         {/* Message text content */}
         {message.text && (
-          <Paper
-            elevation={1}
-            className={clsx(
-              classes.messagePaper,
-              isOwn ? classes.messageOwn : classes.messageOther
-            )}
-          >
-            <Typography variant={sm ? "body1" : "body2"} paragraph>
-              {message.text}
-            </Typography>
-          </Paper>
+          <MessageText text={message.text} isOwn={isOwn} sm={sm} />
         )}
         {/* Message image content */}
         {message.imageUrl && (

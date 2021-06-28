@@ -137,8 +137,8 @@ export default function ChatInput({ contact }: Props): ReactElement {
     setAnchorEl(anchorEl ? null : e.currentTarget);
   };
 
-  const handleEmojiOnClick = (emoji: string) => {
-    setInput(`${input} ${emoji}`);
+  const emojiClickHandler = (emojiName: string) => {
+    setInput(`${input} ${emojiName} `);
   };
 
   return (
@@ -206,7 +206,11 @@ export default function ChatInput({ contact }: Props): ReactElement {
       </div>
 
       {/* Emoji Popper */}
-      <EmojiPopper anchorEl={anchorEl} />
+      <EmojiPopper
+        anchorEl={anchorEl}
+        contactId={contact.id}
+        emojiClickHandler={emojiClickHandler}
+      />
     </form>
   );
 }
