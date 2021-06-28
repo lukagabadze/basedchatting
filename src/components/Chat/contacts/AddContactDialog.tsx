@@ -1,5 +1,6 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import {
+  Avatar,
   Button,
   Checkbox,
   Dialog,
@@ -8,6 +9,7 @@ import {
   Input,
   List,
   ListItem,
+  ListItemAvatar,
   ListItemIcon,
   ListItemText,
   makeStyles,
@@ -15,21 +17,28 @@ import {
 import { database } from "../../../firebase";
 import { useAuth, UserType } from "../../../contexts/AuthContext";
 import { useSocket } from "../../../contexts/SocketContext";
+import { useUsersMap } from "../../../contexts/UsersMapContext";
 
 interface Props {
   open: boolean;
   handleToggle: () => void;
 }
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   dialogHeader: {
     margin: "auto",
   },
   usersList: {
     maxHeight: "45vh",
     overflowY: "auto",
+    marginBottom: theme.spacing(2),
   },
-});
+  userAvatar: {
+    width: theme.spacing(7),
+    height: theme.spacing(7),
+    marginRight: theme.spacing(1),
+  },
+}));
 
 export default function AddContactDialogue({
   open,
@@ -41,6 +50,7 @@ export default function AddContactDialogue({
 
   const classes = useStyles();
   const { user } = useAuth();
+  const { usersMap } = useUsersMap();
   const socket = useSocket();
 
   useEffect(() => {
@@ -135,10 +145,16 @@ export default function AddContactDialogue({
                   button
                   onClick={() => onCheckboxChangeHandler(user, selected)}
                 >
+                  <ListItemAvatar>
+                    <Avatar
+                      className={classes.userAvatar}
+                      src={usersMap[user.uid].imageUrl}
+                    />
+                  </ListItemAvatar>
+                  <ListItemText primary={user.displayName} />
                   <ListItemIcon>
                     <Checkbox checked={selected} />
                   </ListItemIcon>
-                  <ListItemText primary={user.displayName} />
                 </ListItem>
               );
             })}
