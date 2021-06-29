@@ -13,6 +13,7 @@ import {
 import { useAuth, UserType } from "../../../contexts/AuthContext";
 import { useUsersMap } from "../../../contexts/UsersMapContext";
 import { database } from "../../../firebase";
+import { useSocket } from "../../../contexts/SocketContext";
 
 const useStyles = makeStyles((theme) => ({
   dialogHeader: {
@@ -27,16 +28,21 @@ const useStyles = makeStyles((theme) => ({
 interface Props {
   open: boolean;
   handleClose: () => void;
+  contactId: string;
+  members: string[];
 }
 
 export default function AddMemberDialog({
   open,
   handleClose,
+  contactId,
+  members,
 }: Props): ReactElement {
   const [users, setUsers] = useState<UserType[]>([]);
 
   const { user } = useAuth();
   const { usersMap, fetchAndMapUsers } = useUsersMap();
+  const socket = useSocket();
   const classes = useStyles();
 
   useEffect(() => {
@@ -66,6 +72,16 @@ export default function AddMemberDialog({
     fetchUsers();
   }, []);
 
+  function userClickHandler(uid: string) {
+    if (!socket) return;
+
+    socket.emit("contact-update", {
+      contactId: contactId,
+      members: [...members, uid],
+    });
+    handleClose();
+  }
+
   return (
     <Dialog fullWidth open={open} onClose={handleClose}>
       <Typography className={classes.dialogHeader} align="center" variant="h4">
@@ -75,8 +91,14 @@ export default function AddMemberDialog({
       <DialogContent>
         <List>
           {users.map((user) => {
+            if (members.includes(user.uid)) return;
+
             return (
-              <ListItem divider button>
+              <ListItem
+                divider
+                button
+                onClick={() => userClickHandler(user.uid)}
+              >
                 <ListItemAvatar>
                   <Avatar src={usersMap[user.uid].imageUrl} />
                 </ListItemAvatar>
