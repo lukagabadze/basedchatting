@@ -104,9 +104,7 @@ export default function Message({
       }
     >
       {/* User image */}
-      {userImageUrl && (
-        <Avatar className={classes.userAvatar} src={userImageUrl} />
-      )}
+      <Avatar className={classes.userAvatar} src={userImageUrl} />
 
       <div className={classes.messageContentDiv}>
         <div className={classes.messageHeader}>
