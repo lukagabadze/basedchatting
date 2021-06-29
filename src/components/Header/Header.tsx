@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
     cursor: "pointer",
+    marginRight: theme.spacing(1),
   },
   authDiv: {
     flex: "none",
@@ -114,7 +115,12 @@ export default function Header(): ReactElement {
           {user ? (
             <div className={classes.authDiv}>
               {/* Display user */}
-              <Typography variant={sm ? "h5" : "h6"} align="center">
+              <Typography
+                noWrap
+                style={{ width: "40vw" }}
+                variant={sm ? "h5" : "body1"}
+                align="right"
+              >
                 {user && user.displayName}
               </Typography>
 

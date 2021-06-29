@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
   messageDiv: {
     display: "flex",
     marginBottom: theme.spacing(1),
+    // maxWidth: "200px",
   },
   messageContentDiv: {
     display: "flex",
@@ -28,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
   userName: {
     marginRight: theme.spacing(2),
+    maxWidth: "150px",
   },
 
   messageHeader: {
@@ -114,6 +116,7 @@ export default function Message({
             variant="subtitle2"
             color="textPrimary"
             className={classes.userName}
+            noWrap
           >
             {userName}
           </Typography>

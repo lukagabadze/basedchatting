@@ -13,6 +13,8 @@ import {
   makeStyles,
   TextField,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@material-ui/core";
 import { database } from "../../../firebase";
 import { useAuth, UserType } from "../../../contexts/AuthContext";
@@ -62,6 +64,11 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(6),
     marginRight: theme.spacing(1),
   },
+  smallUserAvatar: {
+    width: theme.spacing(4),
+    height: theme.spacing(4),
+    marginRight: 0,
+  },
 }));
 
 export default function AddContactDialogue({
@@ -76,6 +83,9 @@ export default function AddContactDialogue({
   const { user } = useAuth();
   const { usersMap, fetchAndMapUsers } = useUsersMap();
   const socket = useSocket();
+  const theme = useTheme();
+
+  const sm = useMediaQuery(theme.breakpoints.up("sm"));
 
   useEffect(() => {
     async function fetchUsers() {
@@ -200,7 +210,10 @@ export default function AddContactDialogue({
                 >
                   <ListItemAvatar>
                     <Avatar
-                      className={classes.userAvatar}
+                      className={clsx(
+                        classes.userAvatar,
+                        !sm && classes.smallUserAvatar
+                      )}
                       src={
                         usersMap[user.uid]
                           ? usersMap[user.uid].imageUrl
@@ -210,7 +223,7 @@ export default function AddContactDialogue({
                   </ListItemAvatar>
                   <ListItemText
                     primary={
-                      <Typography variant="body1">
+                      <Typography noWrap variant="body1">
                         {user.displayName}
                       </Typography>
                     }
