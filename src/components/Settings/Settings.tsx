@@ -43,7 +43,7 @@ export default function Settings(): ReactElement {
           indicatorColor="primary"
         >
           <Tab label="Profile" />
-          <Tab label="Account" />
+          <Tab label="Dev tools" />
         </Tabs>
         <TabPanel value={value} index={0}>
           <ProfileSettings />
