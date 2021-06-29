@@ -10,7 +10,7 @@ const initialForm = {
 };
 
 export default function Signup(): ReactElement {
-  const { signup, saveUserInfo } = useAuth();
+  const { signup } = useAuth();
   const [form, setForm] = useState(initialForm);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,7 +27,6 @@ export default function Signup(): ReactElement {
       setLoading(true);
       await signup(email, password);
       setForm(initialForm);
-      saveUserInfo();
     } catch {
       setError("Failed to sign up");
     }

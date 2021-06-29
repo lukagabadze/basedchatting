@@ -16,7 +16,6 @@ type AuthContextType = {
   ): Promise<firebase.auth.UserCredential>;
   login(email: string, password: string): Promise<firebase.auth.UserCredential>;
   logout: () => void;
-  saveUserInfo: () => void;
 };
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -49,7 +48,8 @@ export function AuthProvider({ children }: Props): ReactElement {
         .doc(user.uid)
         .onSnapshot(async (snapshot) => {
           const data = snapshot.data();
-          if (!data) return;
+
+          if (!data) return saveUserInfo(user);
 
           const { uid, email, displayName, imageUrl } = data;
 
@@ -78,14 +78,16 @@ export function AuthProvider({ children }: Props): ReactElement {
     return auth.signOut();
   }
 
-  function saveUserInfo() {
-    if (!user) return;
+  function saveUserInfo(userToSave?: firebase.User) {
+    if (!userToSave) return;
 
-    const usersRef = database.collection("users").doc(user.uid);
+    const { uid, email } = userToSave;
+
+    const usersRef = database.collection("users").doc(uid);
     usersRef.set({
-      uid: user.uid,
-      email: user.email,
-      displayName: user.email,
+      uid: uid,
+      email: email,
+      displayName: email,
     });
   }
 
@@ -94,7 +96,6 @@ export function AuthProvider({ children }: Props): ReactElement {
     signup,
     login,
     logout,
-    saveUserInfo,
   };
 
   return (
