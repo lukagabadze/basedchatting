@@ -5,20 +5,20 @@ import {
   Checkbox,
   Dialog,
   DialogContent,
-  DialogTitle,
-  Input,
   List,
   ListItem,
   ListItemAvatar,
   ListItemIcon,
   ListItemText,
   makeStyles,
+  TextField,
   Typography,
 } from "@material-ui/core";
 import { database } from "../../../firebase";
 import { useAuth, UserType } from "../../../contexts/AuthContext";
 import { useSocket } from "../../../contexts/SocketContext";
 import { useUsersMap } from "../../../contexts/UsersMapContext";
+import clsx from "clsx";
 
 interface Props {
   open: boolean;
@@ -26,13 +26,36 @@ interface Props {
 }
 
 const useStyles = makeStyles((theme) => ({
+  dialogPaper: {
+    backgroundColor: theme.palette.secondary.dark,
+  },
   dialogHeader: {
-    margin: "auto",
+    marginTop: theme.spacing(1),
+    color: "white",
   },
   usersList: {
     maxHeight: "45vh",
-    overflowY: "auto",
+    overflowY: "scroll",
+    marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
+  },
+  usersListItem: {
+    marginBottom: theme.spacing(1),
+    color: "white",
+  },
+  userSelected: {
+    backgroundColor: theme.palette.primary.light,
+    color: "white",
+    "&:hover": {
+      backgroundColor: theme.palette.primary.light,
+    },
+  },
+  contactName: {
+    color: "white",
+  },
+  notchedOutline: {
+    borderWidth: "1px",
+    borderColor: "white !important",
   },
   userAvatar: {
     width: theme.spacing(6),
@@ -126,30 +149,54 @@ export default function AddContactDialogue({
   const formValid: boolean = contactName && selectedUsers.length ? true : false;
 
   return (
-    <Dialog open={open} onClose={handleToggle} fullWidth maxWidth="sm">
-      <DialogTitle className={classes.dialogHeader}>Add a contact</DialogTitle>
+    <Dialog
+      open={open}
+      onClose={handleToggle}
+      fullWidth
+      maxWidth="sm"
+      classes={{ paper: classes.dialogPaper }}
+    >
+      <Typography className={classes.dialogHeader} align="center" variant="h4">
+        Add a contact
+      </Typography>
 
       <form onSubmit={onSubmitHandler}>
         <DialogContent>
-          <Input
+          <Typography className={classes.contactName} variant="h6">
+            Contact name:
+          </Typography>
+          <TextField
             value={contactName}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setContactName(e.target.value);
             }}
+            InputProps={{
+              className: classes.contactName,
+              classes: {
+                notchedOutline: classes.notchedOutline,
+              },
+            }}
+            InputLabelProps={{
+              className: classes.contactName,
+            }}
+            variant="outlined"
             placeholder="Contact name"
             fullWidth
             required
           />
-
           <List className={classes.usersList}>
             {users.map((user) => {
               const selected = selectedUsers.includes(user);
               return (
                 <ListItem
                   key={user.uid}
+                  className={clsx(
+                    classes.usersListItem,
+                    selected && classes.userSelected
+                  )}
+                  onClick={() => onCheckboxChangeHandler(user, selected)}
                   button
                   divider
-                  onClick={() => onCheckboxChangeHandler(user, selected)}
                 >
                   <ListItemAvatar>
                     <Avatar
@@ -163,11 +210,13 @@ export default function AddContactDialogue({
                   </ListItemAvatar>
                   <ListItemText
                     primary={
-                      <Typography variant="h6">{user.displayName}</Typography>
+                      <Typography variant="body1">
+                        {user.displayName}
+                      </Typography>
                     }
                   />
                   <ListItemIcon>
-                    <Checkbox checked={selected} />
+                    <Checkbox style={{ color: "white" }} checked={selected} />
                   </ListItemIcon>
                 </ListItem>
               );
