@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { auth, database } from "../firebase";
 import firebase from "firebase";
+import { ContactType } from "../hooks/useFetchContacts";
 
 type AuthContextType = {
   user: UserType | null;
@@ -49,7 +50,10 @@ export function AuthProvider({ children }: Props): ReactElement {
         .onSnapshot(async (snapshot) => {
           const data = snapshot.data();
 
-          if (!data) return saveUserInfo(user);
+          if (!data) {
+            await saveUserInfo(user);
+            return;
+          }
 
           const { uid, email, displayName, imageUrl } = data;
 
@@ -78,17 +82,30 @@ export function AuthProvider({ children }: Props): ReactElement {
     return auth.signOut();
   }
 
-  function saveUserInfo(userToSave?: firebase.User) {
+  async function saveUserInfo(userToSave?: firebase.User) {
     if (!userToSave) return;
 
     const { uid, email } = userToSave;
 
-    const usersRef = database.collection("users").doc(uid);
-    usersRef.set({
-      uid: uid,
-      email: email,
+    const newUser = {
+      uid,
+      email,
       displayName: email,
+    };
+
+    const usersRef = database.collection("users").doc(uid);
+    await usersRef.set(newUser);
+
+    // Add the user to the "All Chat" contact
+    const contactRef = database.doc("contacts/tkoJtPTINSC0D8WFZ62B");
+    const snapshot = await contactRef.get();
+    const contact: ContactType = snapshot.data() as ContactType;
+    contact.members.push(uid);
+
+    await contactRef.update({
+      members: contact.members,
     });
+    setUser(newUser as UserType);
   }
 
   const value = {
