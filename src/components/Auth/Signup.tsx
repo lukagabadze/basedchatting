@@ -1,7 +1,14 @@
 import React, { useState } from "react";
-import { Container, TextField, Typography, Button } from "@material-ui/core";
+import {
+  Container,
+  TextField,
+  Typography,
+  Button,
+  CircularProgress,
+} from "@material-ui/core";
 import { ReactElement } from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import { Link } from "react-router-dom";
 
 const initialForm = {
   email: "",
@@ -83,9 +90,12 @@ export default function Signup(): ReactElement {
         <Typography color="secondary" align="center">
           {error}
         </Typography>
-        <Button type="submit" variant="contained" fullWidth>
-          {loading ? "Loading..." : "Signup"}
+        <Button color="primary" type="submit" variant="contained" fullWidth>
+          {loading ? <CircularProgress color="inherit" /> : "Signup"}
         </Button>
+        <Typography style={{ marginTop: "10px" }}>
+          Already have an account? <Link to="/auth/login">Login</Link>
+        </Typography>
       </form>
     </Container>
   );
