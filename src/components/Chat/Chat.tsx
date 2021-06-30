@@ -67,7 +67,7 @@ export default function Chat(): ReactElement {
   );
 
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ maxHeight: "100vh" }}>
       <Contacts
         contacts={contacts}
         setContactHandler={setContactHandler}

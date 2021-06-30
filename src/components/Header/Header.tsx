@@ -71,7 +71,7 @@ export default function Header(): ReactElement {
 
   return (
     <CssBaseline>
-      <AppBar className={classes.appBar} position="sticky" color="primary">
+      <AppBar className={classes.appBar} position="fixed" color="primary">
         <Toolbar>
           {/* The header */}
           <Typography

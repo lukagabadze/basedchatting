@@ -6,7 +6,6 @@ import {
   useCallback,
 } from "react";
 import {
-  Box,
   IconButton,
   makeStyles,
   Typography,
@@ -24,10 +23,15 @@ import ContactSettingsDrawer from "./ContactSettingsDrawer";
 
 const useStyles = makeStyles((theme) => ({
   gridContainer: {
+    position: "fixed",
     display: "flex",
     flexDirection: "column",
+    width: "100vw",
+    maxHeight: "100%",
+    zIndex: 100,
     backgroundColor: theme.palette.background.default,
   },
+  offset: theme.mixins.toolbar,
   chatHeader: {
     backgroundColor: theme.palette.secondary.main,
     color: "white",
@@ -36,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
+    flex: "none",
   },
   headerLeft: {
     maxWidth: "80vw",
@@ -54,6 +59,8 @@ const useStyles = makeStyles((theme) => ({
     overflowY: "auto",
   },
   chatInputDiv: {
+    flex: "none",
+    marginTop: "auto",
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
   },
@@ -99,11 +106,19 @@ export default function ChatBody({
   }, [setOpen]);
 
   return (
-    <Box
-      height="100%"
+    <div
       className={classes.gridContainer}
-      style={md ? { marginLeft: contactsWidth } : undefined}
+      style={
+        md
+          ? {
+              marginLeft: contactsWidth,
+              width: `calc(100vw - ${contactsWidth}px)`,
+            }
+          : undefined
+      }
     >
+      <div className={classes.offset} />
+
       {/* The Header */}
       <div className={classes.chatHeader}>
         <div className={classes.headerLeft}>
@@ -144,9 +159,9 @@ export default function ChatBody({
         )}
       </div>
 
-      <Box className={classes.chatInputDiv}>
+      <div className={classes.chatInputDiv}>
         {contact && <ChatInput contact={contact} />}
-      </Box>
+      </div>
 
       {/* Contact settings drawer */}
       {contact && (
@@ -156,6 +171,6 @@ export default function ChatBody({
           contact={contact}
         />
       )}
-    </Box>
+    </div>
   );
 }

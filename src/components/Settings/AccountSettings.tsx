@@ -7,7 +7,7 @@ export default function AccountSettings(): ReactElement {
 
   return (
     <Typography variant="h4" align="center" gutterBottom>
-      <Typography color="error" variant="h1">
+      <Typography color="error" variant="h2">
         !!!WARNING!!!
       </Typography>
       <Typography color="error" variant="h4">
