@@ -17,13 +17,13 @@ const useStyles = makeStyles({
 interface Props {
   messages: MessageType[];
   fetchOldMessages(lastMessage: MessageType): void;
-  chatDivRef: RefObject<HTMLDivElement>;
+  firstMessageRef: RefObject<HTMLDivElement>;
 }
 
 export default function Messages({
   messages,
   fetchOldMessages,
-  chatDivRef,
+  firstMessageRef,
 }: Props): ReactElement {
   const classes = useStyles();
   const { user } = useAuth();
@@ -31,10 +31,10 @@ export default function Messages({
 
   useEffect(() => {
     // Scroll the user to the bottom
-    if (chatDivRef.current) {
-      chatDivRef.current.scrollTop = chatDivRef.current.scrollHeight;
+    if (firstMessageRef.current) {
+      firstMessageRef.current.scrollIntoView();
     }
-  }, [chatDivRef]);
+  }, [firstMessageRef.current]);
 
   const observer = useRef<IntersectionObserver>();
   const lastMessageRef = useCallback(
@@ -56,12 +56,18 @@ export default function Messages({
   );
 
   return (
-    <div ref={chatDivRef} className={classes.chatDiv}>
+    <div className={classes.chatDiv}>
       {messages &&
         messages.map((message, ind) => {
           return (
             <div
-              ref={ind === messages.length - 1 ? lastMessageRef : null}
+              ref={
+                ind === messages.length - 1
+                  ? lastMessageRef
+                  : ind === 0
+                  ? firstMessageRef
+                  : undefined
+              }
               key={message.id}
             >
               {(message.text || message.imageUrl) && (

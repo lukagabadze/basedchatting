@@ -17,6 +17,9 @@ import { useEmoji } from "../../../contexts/EmojiContext";
 
 const useStyles = makeStyles((theme) => ({
   popperDiv: {
+    position: "absolute",
+    top: "-250px",
+    left: "-200px",
     zIndex: 10,
     backgroundColor: theme.palette.primary.dark,
     padding: theme.spacing(1),

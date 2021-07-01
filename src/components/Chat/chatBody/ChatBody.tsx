@@ -27,8 +27,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     width: "100vw",
-    maxHeight: "100%",
-    zIndex: 100,
+    maxHeight: "calc(100% - 30px)",
     backgroundColor: theme.palette.background.default,
   },
   offset: theme.mixins.toolbar,
@@ -43,7 +42,6 @@ const useStyles = makeStyles((theme) => ({
     flex: "none",
   },
   headerLeft: {
-    maxWidth: "80vw",
     display: "flex",
     alignItems: "center",
     textOverflow: "ellipsis",
@@ -75,7 +73,7 @@ interface Props {
   messages: MessagesType;
   loading: boolean;
   fetchOldMessages(lastMessage: MessageType): void;
-  chatDivRef: RefObject<HTMLDivElement>;
+  firstMessageRef: RefObject<HTMLDivElement>;
   handleDrawerOpen: () => void;
 }
 
@@ -84,7 +82,7 @@ export default function ChatBody({
   messages,
   loading,
   fetchOldMessages,
-  chatDivRef,
+  firstMessageRef,
   handleDrawerOpen,
 }: Props): ReactElement {
   const [contact, setContact] = useState<ContactType | null>(contactProp);
@@ -93,6 +91,7 @@ export default function ChatBody({
   const classes = useStyles();
   const theme = useTheme();
   const md = useMediaQuery(theme.breakpoints.up("md"));
+  const sm = useMediaQuery(theme.breakpoints.up("sm"));
 
   useEffect(() => {
     setContact(contactProp);
@@ -114,6 +113,10 @@ export default function ChatBody({
               marginLeft: contactsWidth,
               width: `calc(100vw - ${contactsWidth}px)`,
             }
+          : !sm
+          ? {
+              marginTop: "8px",
+            }
           : undefined
       }
     >
@@ -130,18 +133,15 @@ export default function ChatBody({
               <ArrowBackIcon />
             </IconButton>
           )}
-          <Typography variant="h6" noWrap>
+          <Typography variant="body2" noWrap>
             {contact && contact.name}
           </Typography>
         </div>
-        {/* <IconButton color="inherit" 
-        > */}
         <MenuIcon
           className={classes.openDrawer}
           onClick={drawerOpenHandler}
           fontSize={md ? "large" : "default"}
         />
-        {/* </IconButton> */}
       </div>
 
       {/* The Messages */}
@@ -151,7 +151,7 @@ export default function ChatBody({
             <Messages
               messages={messages[contact.id]}
               fetchOldMessages={fetchOldMessages}
-              chatDivRef={chatDivRef}
+              firstMessageRef={firstMessageRef}
             />
           )
         ) : (

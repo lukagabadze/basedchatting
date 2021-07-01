@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
   inputWrapper: {
     display: "flex",
     alignItems: "end",
+    position: "relative",
   },
   chatInputDiv: {
     width: "100%",

@@ -19,13 +19,13 @@ export type MessagesType = {
 
 interface Props {
   contact: ContactType | null;
-  chatDivRef: RefObject<HTMLDivElement>;
+  firstMessageRef: RefObject<HTMLDivElement>;
   handleContactChangeOnMessage: (contactId: string) => void;
 }
 
 export default function useFetchMessage({
   contact,
-  chatDivRef,
+  firstMessageRef,
   handleContactChangeOnMessage,
 }: Props) {
   const [messages, setMessages] = useState<MessagesType>({});
@@ -94,15 +94,15 @@ export default function useFetchMessage({
       handleContactChangeOnMessage(contactId);
 
       // Scroll the user to the bottom
-      if (chatDivRef.current) {
-        chatDivRef.current.scrollTop = chatDivRef.current.scrollHeight;
+      if (firstMessageRef.current) {
+        firstMessageRef.current.scrollIntoView();
       }
     });
 
     return () => {
       socket.off(`new-message-${user.uid}`);
     };
-  }, [socket, user, messages, chatDivRef, handleContactChangeOnMessage]);
+  }, [socket, user, messages, firstMessageRef, handleContactChangeOnMessage]);
 
   async function fetchOldMessages(lastMessage: MessageType) {
     const { contactId } = lastMessage;

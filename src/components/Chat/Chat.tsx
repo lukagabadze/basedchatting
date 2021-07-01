@@ -7,7 +7,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { database } from "../../firebase";
 
 export default function Chat(): ReactElement {
-  const chatDivRef = useRef<HTMLDivElement>(null);
+  const firstMessageRef = useRef<HTMLDivElement>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const { user } = useAuth();
@@ -22,7 +22,7 @@ export default function Chat(): ReactElement {
 
   const { messages, loading, fetchOldMessages } = useFetchMessage({
     contact,
-    chatDivRef,
+    firstMessageRef,
     handleContactChangeOnMessage,
   });
 
@@ -67,7 +67,7 @@ export default function Chat(): ReactElement {
   );
 
   return (
-    <div style={{ maxHeight: "100vh" }}>
+    <div style={{ maxHeight: "100%" }}>
       <Contacts
         contacts={contacts}
         setContactHandler={setContactHandler}
@@ -82,7 +82,7 @@ export default function Chat(): ReactElement {
           contactProp={contact}
           messages={messages}
           fetchOldMessages={fetchOldMessages}
-          chatDivRef={chatDivRef}
+          firstMessageRef={firstMessageRef}
           handleDrawerOpen={handleDrawerOpen}
         />
       )}
