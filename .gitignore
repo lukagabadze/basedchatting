@@ -22,6 +22,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# firebase frontend deployment
+/.firebase
+/.firebaserc
+/firebase.json
 
 # server
 
@@ -29,5 +33,6 @@ yarn-error.log*
 /server/node_modules
 
 # firebase service account
-/server/src/serviceAccountKey.json
+/server/serviceAccountKey.json
 /server/.env
+/server/dist
