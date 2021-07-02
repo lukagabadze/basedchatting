@@ -92,8 +92,8 @@ io.on("connection", (socket: Socket) => {
     });
   });
 
-  socket.on("socket-update", (url) => {
-    socket.broadcast("socket-udate", url);
+  socket.on("socket-update", (emoji) => {
+    socket.broadcast("socket-udate", emoji);
   });
 });
 

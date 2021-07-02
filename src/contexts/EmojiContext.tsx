@@ -38,6 +38,14 @@ export default function EmojiProvider({ children }: Props): ReactElement {
   const socket = useSocket();
 
   useEffect(() => {
+    if (!socket) return;
+
+    socket.on("socket-update", (emoji) => {
+      setEmojis({ ...emojis, emoji });
+    });
+  });
+
+  useEffect(() => {
     async function fetchEmojis() {
       let emojisMap: EmojiType = {};
       const test = await storage.ref("custom-emojis").listAll();
@@ -67,7 +75,7 @@ export default function EmojiProvider({ children }: Props): ReactElement {
     setEmojis(emojisCopy);
 
     if (socket) {
-      socket.emit("emoji-update", url);
+      socket.emit("emoji-update", { emojiName, url });
     }
   }
 
