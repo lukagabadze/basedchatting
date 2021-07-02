@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 import { storage } from "../firebase";
+import { useSocket } from "./SocketContext";
 
 type emojiContextType = {
   emojis: EmojiType;
@@ -33,6 +34,8 @@ interface Props {
 
 export default function EmojiProvider({ children }: Props): ReactElement {
   const [emojis, setEmojis] = useState<EmojiType>({});
+
+  const socket = useSocket();
 
   useEffect(() => {
     async function fetchEmojis() {
@@ -62,6 +65,10 @@ export default function EmojiProvider({ children }: Props): ReactElement {
     const emojisCopy = { ...emojis };
     emojisCopy[emojiName] = url;
     setEmojis(emojisCopy);
+
+    if (socket) {
+      socket.emit("emoji-update", url);
+    }
   }
 
   const value = {

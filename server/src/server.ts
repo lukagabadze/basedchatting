@@ -91,6 +91,10 @@ io.on("connection", (socket: Socket) => {
       io.emit(`contact-update-${member}`, contact);
     });
   });
+
+  socket.on("socket-update", (url) => {
+    socket.broadcast("socket-udate", url);
+  });
 });
 
 const PORT = process.env.PORT;
