@@ -92,12 +92,12 @@ io.on("connection", (socket: Socket) => {
     });
   });
 
-  socket.on("socket-update", (emoji) => {
-    socket.broadcast("socket-udate", emoji);
+  socket.on("emoji-update", (emoji) => {
+    socket.broadcast.emit("emoji-update", emoji);
   });
 });
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 4000;
 
 httpServer.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);

@@ -24,6 +24,11 @@ interface CustomEmojiFn {
   contactId: string;
   image: File;
 }
+interface EmojiUpdateFn {
+  emojiName: string;
+  url: string;
+}
+
 export type EmojiType = {
   [key: string]: string;
 };
@@ -40,8 +45,10 @@ export default function EmojiProvider({ children }: Props): ReactElement {
   useEffect(() => {
     if (!socket) return;
 
-    socket.on("socket-update", (emoji) => {
-      setEmojis({ ...emojis, emoji });
+    socket.on("emoji-update", (emoji: EmojiUpdateFn) => {
+      const emojisTmp = emojis;
+      emojis[emoji.emojiName] = emoji.url;
+      setEmojis(emojisTmp);
     });
   });
 

@@ -17,8 +17,8 @@ export function SocketProvider({ children }: Props): ReactElement {
 
   useEffect(() => {
     const newSocket = io(
-      "https://basedchatting-server.herokuapp.com/",
-      // "localhost:4000",
+      // "https://basedchatting-server.herokuapp.com/",
+      "localhost:4000",
       {
         transports: ["websocket"],
       }
