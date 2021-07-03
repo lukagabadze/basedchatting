@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
     position: "fixed",
     display: "flex",
     flexDirection: "column",
+    justifyContent: "space-between",
     width: "100vw",
     maxHeight: "calc(100% - 30px)",
     backgroundColor: theme.palette.background.default,
