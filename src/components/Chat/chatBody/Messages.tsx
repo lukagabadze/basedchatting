@@ -8,7 +8,6 @@ import { useUsersMap } from "../../../contexts/UsersMapContext";
 const useStyles = makeStyles({
   chatDiv: {
     overflowY: "auto",
-    height: "100vh",
     display: "flex",
     flexDirection: "column-reverse",
   },

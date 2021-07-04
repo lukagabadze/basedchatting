@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     justifyContent: "space-between",
     width: "100vw",
-    maxHeight: "calc(100% - 30px)",
+    height: `calc(100% - ${theme.spacing(2)}px)`,
     backgroundColor: theme.palette.background.default,
   },
   offset: theme.mixins.toolbar,
@@ -116,7 +116,7 @@ export default function ChatBody({
             }
           : !sm
           ? {
-              marginTop: "8px",
+              marginTop: "3px",
             }
           : undefined
       }
