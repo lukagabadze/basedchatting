@@ -1,5 +1,11 @@
 import React, { ReactElement, useState } from "react";
-import { Typography, TextField, Button, makeStyles } from "@material-ui/core";
+import {
+  Typography,
+  TextField,
+  Button,
+  makeStyles,
+  CircularProgress,
+} from "@material-ui/core";
 import { useAuth } from "../../contexts/AuthContext";
 import { database, storage } from "../../firebase";
 
@@ -126,7 +132,7 @@ export default function ProfileSettings(): ReactElement {
         disabled={!formValid}
         fullWidth
       >
-        {loading ? "Loading..." : "Save"}
+        {loading ? <CircularProgress color="inherit" /> : "Save"}
       </Button>
     </form>
   );
