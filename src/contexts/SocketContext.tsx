@@ -16,13 +16,9 @@ export function SocketProvider({ children }: Props): ReactElement {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const newSocket = io(
-      // "https://basedchatting-server.herokuapp.com/",
-      "localhost:4000",
-      {
-        transports: ["websocket"],
-      }
-    );
+    const newSocket = io(process.env.REACT_APP_SERVER_URL!, {
+      transports: ["websocket"],
+    });
     setSocket(newSocket);
 
     return () => {

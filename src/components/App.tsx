@@ -14,6 +14,8 @@ import { useAuth } from "../contexts/AuthContext";
 function App() {
   const { user } = useAuth();
 
+  console.log(`server url - ${process.env.REACT_APP_SERVER_URL}`);
+
   return (
     <Router>
       <div
