@@ -1,4 +1,10 @@
-import React, { ReactElement, useCallback, useState } from "react";
+import React, {
+  ReactElement,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Badge, IconButton, makeStyles, TextField } from "@material-ui/core";
 import SendIcon from "@material-ui/icons/Send";
 import ImageIcon from "@material-ui/icons/Image";
@@ -71,10 +77,25 @@ export default function ChatInput({ contact }: Props): ReactElement {
   const [input, setInput] = useState<string>("");
   const [imageInput, setImageInput] = useState<ImageInputType | null>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const isTypingRef = useRef<boolean>(false);
 
   const classes = useStyles();
   const { user } = useAuth();
   const socket = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+    if (!user) return;
+    if (isTypingRef.current === Boolean(input)) return;
+
+    isTypingRef.current = Boolean(input);
+
+    socket.emit("is-typing", {
+      contactId: contact.id,
+      userUid: user.uid,
+      isTyping: Boolean(input),
+    });
+  }, [input]);
 
   const chatFormSubmitHandler = async (e: React.FormEvent) => {
     e.preventDefault();

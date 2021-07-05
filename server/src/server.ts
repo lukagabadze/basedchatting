@@ -95,6 +95,16 @@ io.on("connection", (socket: Socket) => {
   socket.on("emoji-update", (emoji) => {
     socket.broadcast.emit("emoji-update", emoji);
   });
+
+  interface isTypingFn {
+    contactId: string;
+    userUid: string;
+    isTyping: boolean;
+  }
+
+  socket.on("is-typing", ({ contactId, userUid, isTyping }: isTypingFn) => {
+    socket.broadcast.emit(`is-typing-${contactId}`, { userUid, isTyping });
+  });
 });
 
 const PORT = process.env.NODE_ENV === "production" ? process.env.PORT : 4000;

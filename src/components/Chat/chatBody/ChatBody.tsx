@@ -1,4 +1,10 @@
-import { RefObject, ReactElement, useState, useCallback } from "react";
+import {
+  RefObject,
+  ReactElement,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import {
   IconButton,
   makeStyles,
@@ -14,6 +20,7 @@ import ChatInput from "./ChatInput";
 import { ContactType } from "../../../hooks/useFetchContacts";
 import { MessagesType, MessageType } from "../../../hooks/useFetchMessage";
 import ContactSettingsDrawer from "./ContactSettingsDrawer";
+import { useSocket } from "../../../contexts/SocketContext";
 
 const useStyles = makeStyles((theme) => ({
   gridContainer: {
@@ -81,11 +88,38 @@ export default function ChatBody({
   handleDrawerOpen,
 }: Props): ReactElement {
   const [open, setOpen] = useState<boolean>(false);
+  const [usersTyping, setUsersTyping] = useState<string[]>([]);
 
   const classes = useStyles();
   const theme = useTheme();
+  const socket = useSocket();
   const md = useMediaQuery(theme.breakpoints.up("md"));
   const sm = useMediaQuery(theme.breakpoints.up("sm"));
+
+  // Listen for users typing
+  useEffect(() => {
+    if (!socket) return;
+    if (!contact) return;
+
+    socket.on(
+      `is-typing-${contact.id}`,
+      ({ userUid, isTyping }: { userUid: string; isTyping: boolean }) => {
+        if (isTyping && !usersTyping.includes(userUid)) {
+          setUsersTyping([...usersTyping, userUid]);
+        }
+
+        if (!isTyping && usersTyping.includes(userUid)) {
+          const usersTypingTmp = [...usersTyping];
+          usersTypingTmp.splice(usersTyping.indexOf(userUid), 1);
+          setUsersTyping(usersTypingTmp);
+        }
+      }
+    );
+
+    return () => {
+      socket.off(`new-contact-${contact.id}`);
+    };
+  }, [contact, socket, usersTyping]);
 
   const drawerOpenHandler = useCallback(() => {
     setOpen(true);
@@ -140,6 +174,7 @@ export default function ChatBody({
           contact && (
             <Messages
               messages={messages[contact.id]}
+              usersTyping={usersTyping}
               fetchOldMessages={fetchOldMessages}
               firstMessageRef={firstMessageRef}
             />
