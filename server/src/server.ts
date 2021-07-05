@@ -97,7 +97,7 @@ io.on("connection", (socket: Socket) => {
   });
 });
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.NODE_ENV === "production" ? process.env.PORT : 4000;
 
 httpServer.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);

@@ -14,8 +14,6 @@ RUN npm run build
 
 ## stage two
 
-# FROM node:alpine
-# WORKDIR /server
 COPY  ./src/serviceAccountKey.json ./dist
 RUN ls
 RUN npm install pm2 -g
