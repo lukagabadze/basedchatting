@@ -137,7 +137,7 @@ export default function ContactSettingsDrawer({
         </Typography>
         <List>
           {contact.members.map((member) => {
-            if (!usersMap[member]) return;
+            if (!usersMap[member]) return null;
 
             return (
               <ListItem key={member} divider>

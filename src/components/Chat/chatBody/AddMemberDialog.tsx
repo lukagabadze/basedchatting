@@ -70,7 +70,7 @@ export default function AddMemberDialog({
     }
 
     fetchUsers();
-  }, []);
+  }, [fetchAndMapUsers, user]);
 
   function userClickHandler(uid: string) {
     if (!socket) return;
@@ -91,7 +91,7 @@ export default function AddMemberDialog({
       <DialogContent>
         <List>
           {users.map((user) => {
-            if (members.includes(user.uid)) return;
+            if (members.includes(user.uid)) return null;
 
             return (
               <ListItem

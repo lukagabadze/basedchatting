@@ -43,7 +43,7 @@ export default function Messages({
     if (firstMessageRef.current) {
       firstMessageRef.current.scrollIntoView();
     }
-  }, [firstMessageRef.current, usersTyping]);
+  }, [firstMessageRef, usersTyping]);
 
   const observer = useRef<IntersectionObserver>();
   const lastMessageRef = useCallback(

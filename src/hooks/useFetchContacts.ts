@@ -36,7 +36,7 @@ export default function useFetchContacts() {
     if (contactInd !== null) {
       setContact(contacts[contactInd]);
     }
-  }, [contacts]);
+  }, [contacts, contact]);
 
   useEffect(() => {
     async function fetchContacts() {
@@ -98,6 +98,7 @@ export default function useFetchContacts() {
       let contactInd: number | null = null;
       contacts.map((oldContact, ind) => {
         if (oldContact.id === contact.id) contactInd = ind;
+        return null;
       });
 
       if (contactInd === null) return setContacts([contact, ...contacts]);

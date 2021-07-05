@@ -95,7 +95,7 @@ export default function ChatInput({ contact }: Props): ReactElement {
       userUid: user.uid,
       isTyping: Boolean(input),
     });
-  }, [input]);
+  }, [input, contact, socket, user]);
 
   const chatFormSubmitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
