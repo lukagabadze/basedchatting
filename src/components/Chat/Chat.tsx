@@ -79,7 +79,7 @@ export default function Chat(): ReactElement {
       {contact && (
         <ChatBody
           loading={loading}
-          contactProp={contact}
+          contact={contact}
           messages={messages}
           fetchOldMessages={fetchOldMessages}
           firstMessageRef={firstMessageRef}

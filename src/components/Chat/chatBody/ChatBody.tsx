@@ -1,10 +1,4 @@
-import {
-  RefObject,
-  ReactElement,
-  useEffect,
-  useState,
-  useCallback,
-} from "react";
+import { RefObject, ReactElement, useState, useCallback } from "react";
 import {
   IconButton,
   makeStyles,
@@ -70,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface Props {
-  contactProp: ContactType;
+  contact: ContactType;
   messages: MessagesType;
   loading: boolean;
   fetchOldMessages(lastMessage: MessageType): void;
@@ -79,24 +73,19 @@ interface Props {
 }
 
 export default function ChatBody({
-  contactProp,
+  contact,
   messages,
   loading,
   fetchOldMessages,
   firstMessageRef,
   handleDrawerOpen,
 }: Props): ReactElement {
-  const [contact, setContact] = useState<ContactType | null>(contactProp);
   const [open, setOpen] = useState<boolean>(false);
 
   const classes = useStyles();
   const theme = useTheme();
   const md = useMediaQuery(theme.breakpoints.up("md"));
   const sm = useMediaQuery(theme.breakpoints.up("sm"));
-
-  useEffect(() => {
-    setContact(contactProp);
-  }, [contactProp]);
 
   const drawerOpenHandler = useCallback(() => {
     setOpen(true);
