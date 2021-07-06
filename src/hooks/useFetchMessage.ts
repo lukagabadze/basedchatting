@@ -1,4 +1,4 @@
-import { RefObject, useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useSocket } from "../contexts/SocketContext";
 import { database } from "../firebase";
@@ -19,13 +19,13 @@ export type MessagesType = {
 
 interface Props {
   contact: ContactType | null;
-  firstMessageRef: RefObject<HTMLDivElement>;
+  firstMessage: HTMLDivElement | null;
   handleContactChangeOnMessage: (contactId: string) => void;
 }
 
 export default function useFetchMessage({
   contact,
-  firstMessageRef,
+  firstMessage,
   handleContactChangeOnMessage,
 }: Props) {
   const [messages, setMessages] = useState<MessagesType>({});
@@ -94,15 +94,15 @@ export default function useFetchMessage({
       handleContactChangeOnMessage(contactId);
 
       // Scroll the user to the bottom
-      if (firstMessageRef.current) {
-        firstMessageRef.current.scrollIntoView();
+      if (firstMessage) {
+        firstMessage.scrollIntoView();
       }
     });
 
     return () => {
       socket.off(`new-message-${user.uid}`);
     };
-  }, [socket, user, messages, firstMessageRef, handleContactChangeOnMessage]);
+  }, [socket, user, messages, firstMessage, handleContactChangeOnMessage]);
 
   async function fetchOldMessages(lastMessage: MessageType) {
     const { contactId } = lastMessage;

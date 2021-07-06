@@ -1,10 +1,4 @@
-import {
-  RefObject,
-  ReactElement,
-  useState,
-  useEffect,
-  useCallback,
-} from "react";
+import { ReactElement, useState, useEffect, useCallback } from "react";
 import {
   IconButton,
   makeStyles,
@@ -75,7 +69,8 @@ interface Props {
   messages: MessagesType;
   loading: boolean;
   fetchOldMessages(lastMessage: MessageType): void;
-  firstMessageRef: RefObject<HTMLDivElement>;
+  firstMessage: HTMLDivElement | null;
+  setFirstMessage: React.Dispatch<React.SetStateAction<HTMLDivElement | null>>;
   handleDrawerOpen: () => void;
 }
 
@@ -84,7 +79,8 @@ export default function ChatBody({
   messages,
   loading,
   fetchOldMessages,
-  firstMessageRef,
+  firstMessage,
+  setFirstMessage,
   handleDrawerOpen,
 }: Props): ReactElement {
   const [open, setOpen] = useState<boolean>(false);
@@ -176,7 +172,8 @@ export default function ChatBody({
               messages={messages[contact.id]}
               usersTyping={usersTyping}
               fetchOldMessages={fetchOldMessages}
-              firstMessageRef={firstMessageRef}
+              firstMessage={firstMessage}
+              setFirstMessage={setFirstMessage}
             />
           )
         ) : (

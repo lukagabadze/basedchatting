@@ -1,4 +1,4 @@
-import { RefObject, ReactElement, useRef, useEffect, useCallback } from "react";
+import { ReactElement, useRef, useEffect, useCallback } from "react";
 import { Avatar, makeStyles, Typography } from "@material-ui/core";
 import { useAuth } from "../../../contexts/AuthContext";
 import Message from "./Message";
@@ -25,14 +25,16 @@ interface Props {
   messages: MessageType[];
   usersTyping: string[];
   fetchOldMessages(lastMessage: MessageType): void;
-  firstMessageRef: RefObject<HTMLDivElement>;
+  firstMessage: HTMLDivElement | null;
+  setFirstMessage: React.Dispatch<React.SetStateAction<HTMLDivElement | null>>;
 }
 
 export default function Messages({
   messages,
   usersTyping,
   fetchOldMessages,
-  firstMessageRef,
+  firstMessage,
+  setFirstMessage,
 }: Props): ReactElement {
   const classes = useStyles();
   const { user } = useAuth();
@@ -40,10 +42,10 @@ export default function Messages({
 
   useEffect(() => {
     // Scroll the user to the bottom
-    if (firstMessageRef.current) {
-      firstMessageRef.current.scrollIntoView();
+    if (firstMessage) {
+      firstMessage.scrollIntoView();
     }
-  }, [firstMessageRef, usersTyping]);
+  }, [firstMessage, usersTyping]);
 
   const observer = useRef<IntersectionObserver>();
   const lastMessageRef = useCallback(
@@ -84,7 +86,7 @@ export default function Messages({
                 ind === messages.length - 1
                   ? lastMessageRef
                   : ind === 0
-                  ? firstMessageRef
+                  ? (newRef) => setFirstMessage(newRef)
                   : undefined
               }
               key={message.id}

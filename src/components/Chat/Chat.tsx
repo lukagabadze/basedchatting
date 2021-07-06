@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useRef, useState } from "react";
+import { ReactElement, useCallback, useState } from "react";
 import Contacts from "./contacts/Contacts";
 import ChatBody from "./chatBody/ChatBody";
 import useFetchMessage from "../../hooks/useFetchMessage";
@@ -7,7 +7,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { database } from "../../firebase";
 
 export default function Chat(): ReactElement {
-  const firstMessageRef = useRef<HTMLDivElement>(null);
+  const [firstMessage, setFirstMessage] = useState<HTMLDivElement | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const { user } = useAuth();
@@ -22,7 +22,7 @@ export default function Chat(): ReactElement {
 
   const { messages, loading, fetchOldMessages } = useFetchMessage({
     contact,
-    firstMessageRef,
+    firstMessage,
     handleContactChangeOnMessage,
   });
 
@@ -82,7 +82,8 @@ export default function Chat(): ReactElement {
           contact={contact}
           messages={messages}
           fetchOldMessages={fetchOldMessages}
-          firstMessageRef={firstMessageRef}
+          firstMessage={firstMessage}
+          setFirstMessage={setFirstMessage}
           handleDrawerOpen={handleDrawerOpen}
         />
       )}
