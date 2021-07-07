@@ -1,4 +1,10 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, {
+  ReactElement,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   Avatar,
   Button,
@@ -32,7 +38,11 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.secondary.dark,
   },
   dialogHeader: {
-    marginTop: theme.spacing(1),
+    display: "flex",
+    justifyContent: "space-between",
+    marginTop: theme.spacing(2),
+    paddingLeft: theme.spacing(3),
+    paddingRight: theme.spacing(3),
     color: "white",
   },
   usersList: {
@@ -77,7 +87,7 @@ export default function AddContactDialogue({
 }: Props): ReactElement {
   const [users, setUsers] = useState<UserType[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<UserType[]>([]);
-  const [contactName, setContactName] = useState<string>("");
+  const nameRef = useRef<HTMLInputElement | null>(null);
 
   const classes = useStyles();
   const { user } = useAuth();
@@ -112,25 +122,29 @@ export default function AddContactDialogue({
     }
 
     fetchUsers();
-  }, [user]);
+  }, [user, fetchAndMapUsers]);
 
-  function onCheckboxChangeHandler(user: UserType, selected: boolean) {
-    let selectedUsersCopy = [...selectedUsers];
-    if (selected) {
-      selectedUsersCopy.splice(selectedUsersCopy.indexOf(user), 1);
-    } else {
-      selectedUsersCopy.push(user);
-    }
+  const onCheckboxChangeHandler = useCallback(
+    (user: UserType, selected: boolean) => {
+      let selectedUsersCopy = [...selectedUsers];
+      if (selected) {
+        selectedUsersCopy.splice(selectedUsersCopy.indexOf(user), 1);
+      } else {
+        selectedUsersCopy.push(user);
+      }
 
-    setSelectedUsers(selectedUsersCopy);
-  }
+      setSelectedUsers(selectedUsersCopy);
+    },
+    [selectedUsers, setSelectedUsers]
+  );
 
   function onSubmitHandler(e: React.FormEvent) {
     e.preventDefault();
     if (!user) return;
-    if (!contactName) return;
+    if (!nameRef.current) return;
     if (selectedUsers.length === 0) return;
     if (!socket) return;
+    if (!open) return;
 
     const userUids: string[] = selectedUsers.map(({ uid }) => {
       return uid;
@@ -138,7 +152,7 @@ export default function AddContactDialogue({
     userUids.push(user.uid);
 
     const newContact = {
-      name: contactName,
+      name: nameRef.current.value,
       members: userUids,
       createdAt: Date.now(),
       lastMessageDate: Date.now(),
@@ -153,10 +167,10 @@ export default function AddContactDialogue({
 
     handleToggle();
     setSelectedUsers([]);
-    setContactName("");
   }
 
-  const formValid: boolean = contactName && selectedUsers.length ? true : false;
+  const formValid: boolean =
+    nameRef.current && selectedUsers.length ? true : false;
 
   return (
     <Dialog
@@ -166,20 +180,27 @@ export default function AddContactDialogue({
       maxWidth="sm"
       classes={{ paper: classes.dialogPaper }}
     >
-      <Typography className={classes.dialogHeader} align="center" variant="h4">
-        Add a contact
-      </Typography>
-
       <form onSubmit={onSubmitHandler}>
+        <div className={classes.dialogHeader}>
+          <Typography align="center" variant="h4">
+            Add a contact
+          </Typography>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={!formValid}
+          >
+            Submit
+          </Button>
+        </div>
+
         <DialogContent>
           <Typography className={classes.contactName} variant="h6">
             Contact name:
           </Typography>
           <TextField
-            value={contactName}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setContactName(e.target.value);
-            }}
+            inputRef={nameRef}
             InputProps={{
               className: classes.contactName,
               classes: {
@@ -235,15 +256,6 @@ export default function AddContactDialogue({
               );
             })}
           </List>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            disabled={!formValid}
-          >
-            Submit
-          </Button>
         </DialogContent>
       </form>
     </Dialog>
