@@ -185,6 +185,7 @@ export default function ChatInput({ contact }: Props): ReactElement {
           }
           variant="outlined"
           fullWidth
+          autoFocus
           margin="dense"
           color="secondary"
           rows={4}
