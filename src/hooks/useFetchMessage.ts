@@ -77,7 +77,11 @@ export default function useFetchMessage({
     socket.on(`new-message-${user.uid}`, (message: MessageType) => {
       const { contactId } = message;
 
-      if (contactId in messages && messages[contactId].includes(message))
+      if (
+        contactId in messages &&
+        messages[contactId].filter((oldMessage) => oldMessage.id === message.id)
+          .length
+      )
         return;
 
       const messagesTmp = { ...messages };

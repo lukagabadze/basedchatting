@@ -1,4 +1,4 @@
-import { ReactElement, useRef, useEffect, useCallback } from "react";
+import { ReactElement, useRef, useEffect, useCallback, useState } from "react";
 import { Avatar, makeStyles, Typography } from "@material-ui/core";
 import { useAuth } from "../../../contexts/AuthContext";
 import Message from "./Message";
@@ -36,6 +36,8 @@ export default function Messages({
   firstMessage,
   setFirstMessage,
 }: Props): ReactElement {
+  const [prevMessage, setPrevMessage] = useState<HTMLDivElement | null>(null);
+
   const classes = useStyles();
   const { user } = useAuth();
   const { usersMap } = useUsersMap();
@@ -47,13 +49,20 @@ export default function Messages({
     }
   }, [firstMessage, usersTyping]);
 
+  useEffect(() => {
+    if (prevMessage) {
+      prevMessage.scrollIntoView();
+    }
+  }, [prevMessage]);
+
   const observer = useRef<IntersectionObserver>();
   const lastMessageRef = useCallback(
-    (node) => {
+    (node: HTMLDivElement) => {
       if (observer.current) observer.current.disconnect();
 
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && messages) {
+          setPrevMessage(node);
           fetchOldMessages(messages[messages.length - 1]);
 
           // es araironiulad production build-shi unda iyos
