@@ -24,7 +24,10 @@ const useStyles = makeStyles((theme) => ({
 interface Props {
   messages: MessageType[];
   usersTyping: string[];
-  fetchOldMessages(lastMessage: MessageType): void;
+  fetchOldMessages(
+    lastMessage: MessageType,
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>
+  ): void;
   firstMessage: HTMLDivElement | null;
   setFirstMessage: React.Dispatch<React.SetStateAction<HTMLDivElement | null>>;
 }
@@ -37,6 +40,8 @@ export default function Messages({
   setFirstMessage,
 }: Props): ReactElement {
   const [prevMessage, setPrevMessage] = useState<HTMLDivElement | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const loadingRef = useRef<HTMLDivElement | null>(null);
 
   const classes = useStyles();
   const { user } = useAuth();
@@ -55,6 +60,12 @@ export default function Messages({
     }
   }, [prevMessage]);
 
+  useEffect(() => {
+    if (loadingRef.current) {
+      loadingRef.current.scrollIntoView();
+    }
+  }, [loading]);
+
   const observer = useRef<IntersectionObserver>();
   const lastMessageRef = useCallback(
     (node: HTMLDivElement) => {
@@ -63,7 +74,7 @@ export default function Messages({
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && messages) {
           setPrevMessage(node);
-          fetchOldMessages(messages[messages.length - 1]);
+          fetchOldMessages(messages[messages.length - 1], setLoading);
 
           // es araironiulad production build-shi unda iyos
           console.log("ait... daginaxee");
@@ -111,6 +122,13 @@ export default function Messages({
             </div>
           );
         })}
+      {loading && (
+        <div ref={loadingRef}>
+          <Typography variant="h4" align="center">
+            Loading...
+          </Typography>
+        </div>
+      )}
     </div>
   );
 }

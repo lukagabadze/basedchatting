@@ -108,8 +108,13 @@ export default function useFetchMessage({
     };
   }, [socket, user, messages, firstMessage, handleContactChangeOnMessage]);
 
-  async function fetchOldMessages(lastMessage: MessageType) {
+  async function fetchOldMessages(
+    lastMessage: MessageType,
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>
+  ) {
     const { contactId } = lastMessage;
+
+    setLoading(true);
 
     const messagesRef = database.collection("messages");
     const snapshot = await messagesRef
@@ -118,6 +123,8 @@ export default function useFetchMessage({
       .startAfter(lastMessage.createdAt)
       .limit(20)
       .get();
+
+    setLoading(false);
 
     let messagesList: MessageType[] = [];
     snapshot.forEach((doc) => {

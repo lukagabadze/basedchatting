@@ -68,7 +68,10 @@ interface Props {
   contact: ContactType;
   messages: MessagesType;
   loading: boolean;
-  fetchOldMessages(lastMessage: MessageType): void;
+  fetchOldMessages(
+    lastMessage: MessageType,
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>
+  ): void;
   firstMessage: HTMLDivElement | null;
   setFirstMessage: React.Dispatch<React.SetStateAction<HTMLDivElement | null>>;
   handleDrawerOpen: () => void;
