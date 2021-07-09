@@ -97,7 +97,7 @@ export function AuthProvider({ children }: Props): ReactElement {
     await usersRef.set(newUser);
 
     // Add the user to the "All Chat" contact
-    const contactRef = database.doc("contacts/tkoJtPTINSC0D8WFZ62B");
+    const contactRef = database.doc("contacts/wJj5vY03UBfBekv8jAg5");
     const snapshot = await contactRef.get();
     const contact: ContactType = snapshot.data() as ContactType;
     contact.members.push(uid);
